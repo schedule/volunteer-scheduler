@@ -24,7 +24,7 @@ Some volunteers do both chat and phone.
 2. Fill chat shifts.
 3. Have a second volunteer even on phone days.
 
-### Possible options:
+### Possible special requirements by volunteers:
  - A certain amount of days of available days are only for weekends.
  - Does both chat and phone but prefers chat.
  - Wants to work alone.

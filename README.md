@@ -19,7 +19,7 @@ Arranging volunteers for a helpline service. There are two types of work done on
 3. Have a second volunteer even on phone days.
 
 ### Possible special requirements by volunteers:
- - A certain amount of days of available days are only for weekends.
+ - Maximum amount of days for weekend shifts.
  - Does both chat and phone but prefers chat.
  - Wants to work alone.
  - Does not want to work with a certain volunteer.

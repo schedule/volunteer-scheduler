@@ -1,5 +1,5 @@
 # Helpline scheduler
-Code written in Python 3 fills the most shifts possible while incorporating constrains and special requirements using **[CP-SAT Solver](https://developers.google.com/optimization/cp/cp_solver)**
+Code written in Python 3 finds the best possible schedule for volunteers while incorporating constrains and special requirements using **[CP-SAT Solver](https://developers.google.com/optimization/cp/cp_solver)**
 
 ### The problem
 Arranging volunteers for a helpline service. There are two types of work done on the same day:

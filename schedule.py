@@ -47,7 +47,7 @@ distance = 2 # Distance between workdays per person
 # 1: Volunteer ID number,
 # 2: type, ('P':only phone  'C':only chat  'CP':chat and phone  'O':observer)
 # 3: [days available],
-# 4: maximum total workload
+# 4: maximum total workload,
 # 5: max weekend days,
 # 6: welcomes observer,
 # 7: wants shifts to be on separate weekends,

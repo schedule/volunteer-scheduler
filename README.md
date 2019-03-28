@@ -36,7 +36,9 @@ Arranging volunteers for a helpline service. There are two types of work done on
 >2019 April   -   Distance: 2
 >
 >Volunteer 1: 13. phone
+>
 >Volunteer 1: 30. phone
+>
 >Volunteer 2: 6. phone
 Volunteer 2: 12. phone
 Volunteer 2: 23. phone

@@ -20,10 +20,13 @@ Arranging volunteers for a helpline service. There are two types of work done on
 
 ### Possible special requirements by volunteers:
  - Maximum amount of days for weekend shifts.
+ - Wants their shifts to be on separate weeks.
  - Does both chat and phone but prefers chat.
+ - Welcomes observer volunteer to work on the same day.
  - Wants to work alone.
- - Does not want to work with a certain volunteer.
+ - Cannot work alone.
  - Wants shifts on different weeks.
+ - Does not want to work with some other people.
 
 ### Objective:
  Maximize filled shifts.

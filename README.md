@@ -31,84 +31,86 @@ Arranging volunteers for a helpline service. There are two types of work done on
 ### Objective:
  Maximize filled shifts.
 
+<hr />
+
 ## Sample output:
 
->2019 April   -   Distance: 2
->
->Volunteer 1: 13. phone
->
->Volunteer 1: 30. phone
->
->Volunteer 2: 6. phone
-Volunteer 2: 12. phone
-<hr />Volunteer 2: 23. phone
-Volunteer 2: 28. phone
-Volunteer 3: 22. phone
-Volunteer 3: 29. phone
-Volunteer 4: 19. phone
-Volunteer 4: 27. phone
-Volunteer 5: 25. phone
-Volunteer 6: 8. phone
-Volunteer 6: 15. phone
-Volunteer 7: 18. phone
-Volunteer 7: 26. phone
-Volunteer 8: 3. chat
-Volunteer 8: 14. phone
-Volunteer 9: 1. phone
-Volunteer 9: 10. phone
-Volunteer 9: 21. phone
-Volunteer 10: 5. phone
-Volunteer 10: 16. phone
-Volunteer 11: 3. phone
-Volunteer 11: 8. chat
-Volunteer 12: 4. phone
-Volunteer 12: 11. phone
-Volunteer 13: 7. phone
-Volunteer 13: 15. chat
-Volunteer 13: 20. phone
-Volunteer 14: 10. chat
-Volunteer 14: 22. chat
-Volunteer 14: 29. chat
-Volunteer 15: 9. phone
-Volunteer 15: 17. phone
-Volunteer 16: 2. phone
-Volunteer 16: 24. phone
-Volunteer 17: 6. observer
-Volunteer 17: 14. observer
-Volunteer 17: 19. observer
-Volunteer 17: 26. observer
+2019 April   -   Distance: 2
+<p>2019 April - Distance: 2</p>
 
-Remaining capacities: None
+<p>Volunteer 1: 13. phone<br />
+Volunteer 1: 30. phone<br />
+Volunteer 2: 6. phone<br />
+Volunteer 2: 12. phone<br />
+Volunteer 2: 23. phone<br />
+Volunteer 2: 28. phone<br />
+Volunteer 3: 22. phone<br />
+Volunteer 3: 29. phone<br />
+Volunteer 4: 19. phone<br />
+Volunteer 4: 27. phone<br />
+Volunteer 5: 25. phone<br />
+Volunteer 6: 8. phone<br />
+Volunteer 6: 15. phone<br />
+Volunteer 7: 18. phone<br />
+Volunteer 7: 26. phone<br />
+Volunteer 8: 3. chat<br />
+Volunteer 8: 14. phone<br />
+Volunteer 9: 1. phone<br />
+Volunteer 9: 10. phone<br />
+Volunteer 9: 21. phone<br />
+Volunteer 10: 5. phone<br />
+Volunteer 10: 16. phone<br />
+Volunteer 11: 3. phone<br />
+Volunteer 11: 8. chat<br />
+Volunteer 12: 4. phone<br />
+Volunteer 12: 11. phone<br />
+Volunteer 13: 7. phone<br />
+Volunteer 13: 15. chat<br />
+Volunteer 13: 20. phone<br />
+Volunteer 14: 10. chat<br />
+Volunteer 14: 22. chat<br />
+Volunteer 14: 29. chat<br />
+Volunteer 15: 9. phone<br />
+Volunteer 15: 17. phone<br />
+Volunteer 16: 2. phone<br />
+Volunteer 16: 24. phone<br />
+Volunteer 17: 6. observer<br />
+Volunteer 17: 14. observer<br />
+Volunteer 17: 19. observer<br />
+Volunteer 17: 26. observer</p>
 
-Day|  P  C  O
-___|___________
- 1.|  9  _
- 2.| 16    
- 3.| 11  8
- 4.| 12    
- 5.| 10    
- 6.|  2    17
- 7.| 13    
- 8.|  6 11
- 9.| 15    
-10.|  9 14
-11.| 12    
-12.|  2    
-13.|  1    
-14.|  8    17
-15.|  6 13
-16.| 10    
-17.| 15  _
-18.|  7    
-19.|  4    17
-20.| 13    
-21.|  9    
-22.|  3 14
-23.|  2    
-24.| 16  _
-25.|  5    
-26.|  7    17
-27.|  4    
-28.|  2    
-29.|  3 14
-30.|  1    
+<p>Remaining capacities: None</p>
+
+<p>Day| P C O<br />
+___|___________<br />
+ 1.| 9 _<br />
+ 2.| 16 <br />
+ 3.| 11 8<br />
+ 4.| 12 <br />
+ 5.| 10 <br />
+ 6.| 2 17<br />
+ 7.| 13 <br />
+ 8.| 6 11<br />
+ 9.| 15 <br />
+10.| 9 14<br />
+11.| 12 <br />
+12.| 2 <br />
+13.| 1 <br />
+14.| 8 17<br />
+15.| 6 13<br />
+16.| 10 <br />
+17.| 15 _<br />
+18.| 7 <br />
+19.| 4 17<br />
+20.| 13 <br />
+21.| 9 <br />
+22.| 3 14<br />
+23.| 2 <br />
+24.| 16 _<br />
+25.| 5 <br />
+26.| 7 17<br />
+27.| 4 <br />
+28.| 2 <br />
+29.| 3 14<br />
+30.| 1 <br />
+</p>

@@ -41,7 +41,7 @@ Arranging volunteers for a helpline service. There are two types of work done on
 >
 >Volunteer 2: 6. phone
 Volunteer 2: 12. phone
-Volunteer 2: 23. phone
+<hr />Volunteer 2: 23. phone
 Volunteer 2: 28. phone
 Volunteer 3: 22. phone
 Volunteer 3: 29. phone

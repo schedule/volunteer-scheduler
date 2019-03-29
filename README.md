@@ -28,6 +28,7 @@ Each volunteer has to have 4 days between their shifts.
 1. Have minimum one volunteer for each day.
 2. Fill chat shifts.
 3. Have a second volunteer even on phone days.
+4. Employ observers if possible.
 
 ### Objective:
  Maximize filled shifts.

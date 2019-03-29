@@ -1,5 +1,5 @@
 
-2019 April   -   Distance: 2
+2019 April   
 
 Volunteer 1: 13. phone
 Volunteer 1: 30. phone
@@ -76,6 +76,3 @@ ___|___________
 28.|  2    
 29.|  3 14 
 30.|  1    
-
-
-

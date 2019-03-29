@@ -1,35 +1,4 @@
-# Helpline scheduling for a month
-#
-# Phone shift: every day of month
-# Chat shift: Mondays and Wednesdays
-#
-# Constraints:
-# Each volunteer gives a list of days they are available.
-# Each volunteer has to have 4 days between their shifts.
-# One volunteer only does chat because of hearing problems.
-# Most volunteers only do phone because they are not qualified for chat.
-# Some volunteers do both chat and phone.
-# Operator or Hospiter: Hospiter is second or third.
-# Operator option: welcomes hospiter or not.
-# Hospiter also gives available days
-#
-# Priorities:
-# 1.: Have minimum one volunteer for each day.
-# 2.: Fill chat shifts.
-# 3.: Have a second volunteer even on phone days.
-#
-# Possible options:
-# - A certain amount of days of available days are only for weekends.
-# - Does both chat and phone but prefers chat.
-# - Welcomes observer volunteer to work on the same day.
-# - Does not want to work with a certain volunteer.
-# - Wants their shifts to be on separate weeks.
-# - Wants to work alone.
-# - Cannot work alone.
-# - Do not want to work with some other people.
-#
-# Objective:
-# Maximize filled shifts
+# Helpline scheduler
 
 input_list = []
 def input(id, type, days_available, workload, max_weekend_days,

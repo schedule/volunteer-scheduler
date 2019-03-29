@@ -1,4 +1,4 @@
-# Helpline scheduler
+# https://github.com/imreszakal/helpline_scheduler
 
 input_list = []
 def input(id, type, days_available, workload, max_weekend_days,

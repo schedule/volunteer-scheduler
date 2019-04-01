@@ -194,7 +194,7 @@ def main():
     # List of volunteers who cannot work alone
     cannot_work_alone = []
 
-    # List of volunteer who does not want to work with someone persons
+    # List of volunteer who does not want to work with some others
     not_with_them = []
 
     # Distance between workdays per person

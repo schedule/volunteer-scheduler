@@ -32,3 +32,8 @@ Each volunteer has to have 4 days between their shifts.
 
 ### Objective:
  Maximize filled shifts.
+
+<hr>
+
+## Usage
+Export schedule.csv into a spreadsheet, fill in your data, then export back into this file.

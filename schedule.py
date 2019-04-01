@@ -71,21 +71,8 @@ def main():
         week_index += 1
         m += 7
 
-    # Distance between workdays per person
-    distance = 4
-
     # Phone: shift 0, Chat: shift 1, Observation: shift 2
     shifts = [0,1,2]
-
-    # List of volunteers welcoming observers and list of observers:
-    welcomers = []
-    observers = []
-
-    # List of volunteers who cannot work alone
-    cannot_work_alone = []
-
-    # List of volunteer who does not want to work with someone
-    not_with_them = []
 
     # Creates the model.
     model = cp_model.CpModel()
@@ -98,10 +85,6 @@ def main():
             for s in shifts:
                 i = 'shift_{:_>2}.{:_>2}.{}'.format(v, d, s)
                 schedule[(v, d, s)] = model.NewBoolVar(i)
-    all_days_available = []
-    all_workload = []
-    all_cannot_alone = []
-    all_not_with = []
 
     # Sets up class to processes input data
     def use_volunteer_data(id, type, days_available, workload,
@@ -198,6 +181,24 @@ def main():
         volunteer_dic[i-3] = f[i][0]
         volunteer_dic_r[f[i][0]] = i-3
         i += 1
+
+    all_days_available = []
+    all_workload = []
+    all_cannot_alone = []
+    all_not_with = []
+
+    # List of volunteers welcoming observers and list of observers:
+    welcomers = []
+    observers = []
+
+    # List of volunteers who cannot work alone
+    cannot_work_alone = []
+
+    # List of volunteer who does not want to work with someone persons
+    not_with_them = []
+
+    # Distance between workdays per person
+    distance = 4
 
     i = data_first
     while i <= data_last:

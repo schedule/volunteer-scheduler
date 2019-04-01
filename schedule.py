@@ -281,7 +281,10 @@ def main():
                 for v in them for s in shifts) == False)
 
     # OBJECTIVE
-    model.Maximize(sum(schedule[(v, d, s)]
+    # Filled phone shifts has the greatest priority
+    model.Maximize(sum(10 * schedule[(v, d, s)] if s == 0
+        else 3 * schedule[(v, d, s)] if s == 1
+        else schedule[(v, d, s)]
             for d in list_of_days for s in shifts for v in volunteers))
 
 
@@ -291,11 +294,7 @@ def main():
     solver = cp_model.CpSolver()
     solver.Solve(model)
 
-    # Prints out workload for each volunteer
-    # print()
     print()
-    # calendar.setfirstweekday(calendar.MONDAY)
-    # print(calendar.month(schedule_year, schedule_month))
     print(str(schedule_year) + ' ' + month_name + ' schedule:')
     print()
     for v in volunteers:
@@ -312,34 +311,35 @@ def main():
                     if has:
                         print(' ' * 12 + '{:>2}. {}'.format(d,t))
                     else:
-                        print('{:>10}: '.format(volunteer_dic[v]) + '{:>2}. {}'.format(d,t))
+                        print('{:>10}: '.format(volunteer_dic[v])
+                            + '{:>2}. {}'.format(d,t))
                     has = True
         if has:
             print()
     print()
 
     # Who works less than willing?
-    # print('Remaining capacities: ', end='')
-    # free_capacity = False
-    # for v in volunteers:
-    #     works = 0
-    #     for d in list_of_days:
-    #         for s in shifts:
-    #             if solver.Value(schedule[(v, d, s)]) == 1:
-    #                 works += 1
-    #     more = all_workload[v] - works
-    #     if more > 0:
-    #         free_capacity = True
-    #         more = input_list[v][3] - works
-    #         print('Free capacity of', volunteer_dic[v] + ': {} day'\
-    #             .format(v, more), end='')
-    #         if more > 1:
-    #             print('s.')
-    #         else:
-    #             print('.')
-    # if not free_capacity:
-    #     print('None')
-    # print()
+    print('Working less than willing: ', end='')
+    free_capacity = False
+    for v in volunteers:
+        works = 0
+        for d in list_of_days:
+            for s in shifts:
+                if solver.Value(schedule[(v, d, s)]) == 1:
+                    works += 1
+        more = all_workload[v] - works
+        if more > 0:
+            free_capacity = True
+            more = input_list[v][3] - works
+            print('Free capacity of', volunteer_dic[v] + ': {} day'\
+                .format(v, more), end='')
+            if more > 1:
+                print('s.')
+            else:
+                print('.')
+    if not free_capacity:
+        print('None')
+    print()
 
     print(str(schedule_year) + ' ' + month_name)
     print('Day|      Phone       Chat    Observer')

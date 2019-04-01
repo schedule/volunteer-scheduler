@@ -116,5 +116,6 @@ ___|______________________________________
             18. observer
 
 
-Working less than willing: None
+Workloads: 
+Workloads match originally offered capacity.
 

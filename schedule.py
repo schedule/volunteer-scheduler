@@ -420,26 +420,27 @@ def main():
     print()
 
     # Who works less than willing?
-    print('Working less than willing: ', end='')
-    free_capacity = False
+    print('Workloads: ')
+    nonzero_capacity = False
     for v in volunteers:
         works = 0
+        more = 0
         for d in list_of_days:
             for s in shifts:
                 if solver.Value(schedule[(v, d, s)]) == 1:
                     works += 1
         more = all_workload[v] - works
-        if more > 0:
-            free_capacity = True
-            more = input_list[v][3] - works
-            print('Free capacity of', volunteer_dic[v] + ': {} day'\
-                .format(v, more), end='')
-            if more > 1:
-                print('s.')
-            else:
-                print('.')
-    if not free_capacity:
-        print('None')
+        if more > 0 or more < 0:
+            nonzero_capacity = True
+            print('{:>10} works {} day'.format(volunteer_dic[v], works), end='')
+            if works > 1:
+                print('s', end='')
+            print(' but offered', all_workload[v], 'day', end='')
+            if all_workload[v] > 1:
+                print('s', end='')
+            print('.')
+    if not nonzero_capacity:
+        print('Workloads match originally offered capacity.')
     print()
 
 

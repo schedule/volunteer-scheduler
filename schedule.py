@@ -72,7 +72,7 @@ def main():
         m += 7
 
     # Distance between workdays per person
-    distance = 2
+    distance = 4
 
     # Phone: shift 0, Chat: shift 1, Observation: shift 2
     shifts = [0,1,2]
@@ -115,43 +115,43 @@ def main():
         if type == 'C':
             for d in list_of_days:
                 for s in [0,2]:
-                    model.Add(schedule[(id, d, s)] == 0)
+                    model.Add(schedule[(id, d, s)] == False)
                 if d in days_available:
                     model.Add(schedule[(id, d, 1)] <= 1)
                 else:
-                    model.Add(schedule[(id, d, 1)] == 0)
+                    model.Add(schedule[(id, d, 1)] == False)
 
         # Volunteers doing chat and phone
         if type == 'CP':
             for d in list_of_days:
-                model.Add(schedule[(id, d, 2)] == 0)
+                model.Add(schedule[(id, d, 2)] == False)
                 if d in days_available:
-                    for s in [0,1]:
-                        model.Add(schedule[(id, d, s)] <= 1)
+                    model.Add(sum(schedule[(id, d, s)]
+                            for s in [0,1]) <= 1)
                 else:
                     for s in [0,1]:
-                        model.Add(schedule[(id, d, s)] == 0)
+                        model.Add(schedule[(id, d, s)] == False)
 
         # Volunteers doing only phone
         if type == 'P':
             for d in list_of_days:
                 for s in [1,2]:
-                    model.Add(schedule[(id, d, s)] == 0)
+                    model.Add(schedule[(id, d, s)] == False)
                 if d in days_available:
                     model.Add(schedule[(id, d, 0)] <= 1)
                 else:
-                    model.Add(schedule[(id, d, 0)] == 0)
+                    model.Add(schedule[(id, d, 0)] == False)
 
         # Volunteers doing observation
         if type == 'O':
             observers.append(id)
             for d in list_of_days:
                 for s in [0,1]:
-                    model.Add(schedule[(id, d, s)] == 0)
+                    model.Add(schedule[(id, d, s)] == False)
                 if d in days_available:
                     model.Add(schedule[(id, d, 2)] <= 1)
                 else:
-                    model.Add(schedule[(id, d, 2)] == 0)
+                    model.Add(schedule[(id, d, 2)] == False)
 
         # List observers and volunteers welcoming observers
         if type in ['C', 'CP', 'P'] and welcomes_observer:
@@ -199,7 +199,6 @@ def main():
         volunteer_dic_r[f[i][0]] = i-3
         i += 1
 
-    # 5,'P',[25,5,6,8],7,6,1,0,0,0,[])
     i = data_first
     while i <= data_last:
         id = i-3
@@ -214,11 +213,12 @@ def main():
         cannot_alone = bool(int(f[i][8]))
         not_with = [volunteer_dic_r[name] for name in f[i][9].split(',')
             if name]
-        use_volunteer_data(id, type, days_available, max_weekend_days, workload,
-            welcomes_observer, separate_w, alone, cannot_alone, not_with)
+        use_volunteer_data(id, type, days_available, workload,
+            max_weekend_days, welcomes_observer, separate_w, alone,
+            cannot_alone, not_with)
         i += 1
 
-    # Exactly one volunteer per shift.
+    # Maximum one volunteer per shift.
     for d in list_of_days:
         # Phone shifts every day
         model.Add(sum(schedule[(v, d, 0)] for v in volunteers) <= 1)
@@ -227,29 +227,26 @@ def main():
             model.Add(sum(schedule[(v, d, 1)] for v in volunteers) <= 1)
         # No chat shift for other days
         else:
-            model.Add(sum(schedule[(v, d, 1)] for v in volunteers) == 0)
+            for v in volunteers:
+                model.Add(schedule[(v, d, 1)] == False)
 
     # At least four days between shifts per volunteer
     for v in volunteers:
-        for day in list_of_days:
-            a = day-distance
-            b = day+distance+1
-            while a < 1:
-                a += 1
-            while b > days_in_month:
-                b -= 1
+        days = list_of_days[0:-distance+1]
+        for day in days:
+            b = day+distance
             model.Add(sum(schedule[(v, d, s)]
-                for s in shifts for d in range(a,b)) <= 1)
+                for s in shifts for d in range(day, b)) <= 1)
 
     # Observers only work with volunteers they are welcomed by
     for day in list_of_days:
         for o in observers:
             for v in volunteers:
-                for s in [0,1]:
-                    if v in welcomers:
-                        model.Add(schedule[(o, d, 2)] <=
-                            schedule[(v, d, s)])
-                    else:
+                if v in welcomers:
+                    model.Add(schedule[(o, d, 2)] <=
+                        sum(schedule[(v, d, s)] for s in [0,1]))
+                else:
+                    for s in [0,1]:
                         model.Add(schedule[(o, d, 2)] and
                             schedule[(v, d, s)] == False)
 
@@ -280,12 +277,12 @@ def main():
                 and sum(schedule[(v, d, s)]
                 for v in them for s in shifts) == False)
 
+
     # OBJECTIVE
     # Filled phone shifts has the greatest priority
-    model.Maximize(sum(10 * schedule[(v, d, s)] if s == 0
-        else 3 * schedule[(v, d, s)] if s == 1
-        else schedule[(v, d, s)]
-            for d in list_of_days for s in shifts for v in volunteers))
+    model.Maximize(sum(2 * schedule[(v, d, 0)] + schedule[(v, d, 1)]
+        + schedule[(v, d, 2)]
+        for d in list_of_days for v in volunteers))
 
 
     # SOLUTION

@@ -295,93 +295,7 @@ def main():
     solver.Solve(model)
 
     print()
-    print(str(schedule_year) + ' ' + month_name + ' schedule:')
     print()
-    for v in volunteers:
-        has = False
-        for d in list_of_days:
-            for s in shifts:
-                if solver.Value(schedule[(v, d, s)]) == 1:
-                    if s == 0:
-                        t = 'phone'
-                    elif s == 1:
-                        t = 'chat'
-                    elif s == 2:
-                        t = 'observer'
-                    if has:
-                        print(' ' * 12 + '{:>2}. {}'.format(d,t))
-                    else:
-                        print('{:>10}: '.format(volunteer_dic[v])
-                            + '{:>2}. {}'.format(d,t))
-                    has = True
-        if has:
-            print()
-    print()
-
-    # Who works less than willing?
-    print('Working less than willing: ', end='')
-    free_capacity = False
-    for v in volunteers:
-        works = 0
-        for d in list_of_days:
-            for s in shifts:
-                if solver.Value(schedule[(v, d, s)]) == 1:
-                    works += 1
-        more = all_workload[v] - works
-        if more > 0:
-            free_capacity = True
-            more = input_list[v][3] - works
-            print('Free capacity of', volunteer_dic[v] + ': {} day'\
-                .format(v, more), end='')
-            if more > 1:
-                print('s.')
-            else:
-                print('.')
-    if not free_capacity:
-        print('None')
-    print()
-
-    print(str(schedule_year) + ' ' + month_name)
-    print('Day|      Phone       Chat    Observer')
-    print('___|______________________________________')
-    for d in list_of_days:
-        phone, chat, observer = False, False, False
-        print('{:>2}.| '.format(d), end='')
-
-        # Phone
-        for v in volunteers:
-            if solver.Value(schedule[(v, d, 0)]) == 1:
-                phone = True
-                break
-        if phone:
-            print('{:>10} '.format(volunteer_dic[v]), end='')
-        else:
-            print('      _    ', end='')
-
-        # Chat
-        for v in volunteers:
-            if solver.Value(schedule[(v, d, 1)]) == 1:
-                chat = True
-                break
-        if chat:
-            print('{:>10} '.format(volunteer_dic[v]), end='')
-        elif d in chat_days:
-            print('      _    ', end='')
-        else:
-            print('           ', end='')
-
-        # Observer
-        for v in volunteers:
-            if solver.Value(schedule[(v, d, 2)]) == 1:
-                observer = True
-                break
-        if observer:
-            print('{:>10} '.format(volunteer_dic[v]), end='')
-        print()
-    print()
-    print()
-    print()
-
     print(str(schedule_year) + ' ' + month_name)
     print('____________________________________________________________________________________________________________')
     first_shift = ''
@@ -439,11 +353,95 @@ def main():
         print(line_2)
         print(line_3)
         print('____________________________________________________________________________________________________________')
-        # print()
-        # print()
-        # print()
     print()
     print()
     print()
+
+    # print(str(schedule_year) + ' ' + month_name)
+    print('Day|      Phone       Chat    Observer')
+    print('___|______________________________________')
+    for d in list_of_days:
+        phone, chat, observer = False, False, False
+        print('{:>2}.| '.format(d), end='')
+
+        # Phone
+        for v in volunteers:
+            if solver.Value(schedule[(v, d, 0)]) == 1:
+                phone = True
+                break
+        if phone:
+            print('{:>10} '.format(volunteer_dic[v]), end='')
+        else:
+            print('      _    ', end='')
+
+        # Chat
+        for v in volunteers:
+            if solver.Value(schedule[(v, d, 1)]) == 1:
+                chat = True
+                break
+        if chat:
+            print('{:>10} '.format(volunteer_dic[v]), end='')
+        elif d in chat_days:
+            print('      _    ', end='')
+        else:
+            print('           ', end='')
+
+        # Observer
+        for v in volunteers:
+            if solver.Value(schedule[(v, d, 2)]) == 1:
+                observer = True
+                break
+        if observer:
+            print('{:>10} '.format(volunteer_dic[v]), end='')
+        print()
+    print()
+
+    # print(str(schedule_year) + ' ' + month_name)
+    print()
+    for v in volunteers:
+        has = False
+        for d in list_of_days:
+            for s in shifts:
+                if solver.Value(schedule[(v, d, s)]) == 1:
+                    if s == 0:
+                        t = 'phone'
+                    elif s == 1:
+                        t = 'chat'
+                    elif s == 2:
+                        t = 'observer'
+                    if has:
+                        print(' ' * 12 + '{:>2}. {}'.format(d,t))
+                    else:
+                        print('{:>10}: '.format(volunteer_dic[v])
+                            + '{:>2}. {}'.format(d,t))
+                    has = True
+        if has:
+            print()
+    print()
+
+    # Who works less than willing?
+    print('Working less than willing: ', end='')
+    free_capacity = False
+    for v in volunteers:
+        works = 0
+        for d in list_of_days:
+            for s in shifts:
+                if solver.Value(schedule[(v, d, s)]) == 1:
+                    works += 1
+        more = all_workload[v] - works
+        if more > 0:
+            free_capacity = True
+            more = input_list[v][3] - works
+            print('Free capacity of', volunteer_dic[v] + ': {} day'\
+                .format(v, more), end='')
+            if more > 1:
+                print('s.')
+            else:
+                print('.')
+    if not free_capacity:
+        print('None')
+    print()
+
+
 if __name__ == '__main__':
     main()

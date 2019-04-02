@@ -175,14 +175,6 @@ def main():
             not_with_them.append([id, not_with])
 
 
-    volunteer_dic = {}
-    volunteer_dic_r = {}
-    i = data_first
-    while i <= data_last:
-        volunteer_dic[i-3] = f[i][0]
-        volunteer_dic_r[f[i][0]] = i-3
-        i += 1
-
     all_days_available = []
     all_workload = []
     all_cannot_alone = []
@@ -198,8 +190,17 @@ def main():
     # List of volunteer who does not want to work with some others
     not_with_them = []
 
-    # Distance between workdays per person
-    distance = 4
+
+    # Processing file data
+
+    # volunteer_dic = {ID:name}, volunteer_dic_r = {name:ID}
+    volunteer_dic = {}
+    volunteer_dic_r = {}
+    i = data_first
+    while i <= data_last:
+        volunteer_dic[i-3] = f[i][0]
+        volunteer_dic_r[f[i][0]] = i-3
+        i += 1
 
     def bool_from_string(value):
         bool(int(value))
@@ -209,20 +210,28 @@ def main():
         id = i-3
         values = [x for x in f[i]]
         type = values[1]
+
         days_available = [int(x) for x in values[2].split(',')
             if x.strip().isdigit()]
+
         workload = int(values[3])
         max_weekend_days = int(values[4])
+
         welcomes_observer = bool_from_string(values[5])
         separate_w = bool_from_string(values[6])
         alone = bool_from_string(values[7])
         cannot_alone = bool_from_string(values[8])
+
         not_with = [volunteer_dic_r[name] for name in values[9].split(',')
             if name]
+
         use_volunteer_data(id, type, days_available, workload,
             max_weekend_days, welcomes_observer, separate_w, alone,
             cannot_alone, not_with)
         i += 1
+
+
+    # Adding more constraints
 
     # Maximum one volunteer per shift.
     for d in list_of_days:
@@ -283,8 +292,12 @@ def main():
                 and sum(schedule[(v, d, s)]
                 for v in them for s in shifts) == False)
 
+    # Distance between workdays per person
+    distance = 4
+
 
     # OBJECTIVE
+
     # Filled phone shifts has the greatest priority
     model.Maximize(sum(2 * schedule[(v, d, 0)] + schedule[(v, d, 1)]
         + schedule[(v, d, 2)]
@@ -396,7 +409,7 @@ def main():
         elif d in chat_days:
             print('      _    ', end='')
         else:
-            print('           ', end='')
+            print(' ' * 11, end='')
 
         # Observer
         for v in volunteers:

@@ -71,6 +71,7 @@ def main():
         week_index += 1
         m += 7
 
+
     # Phone: shift 0, Chat: shift 1, Observation: shift 2
     shifts = [0,1,2]
 
@@ -292,6 +293,7 @@ def main():
     solver = cp_model.CpSolver()
     solver.Solve(model)
 
+
     def horizontal_line():
         print('_' * 108)
 
@@ -358,12 +360,17 @@ def main():
     print()
     print()
 
+
     # print(str(schedule_year) + ' ' + month_name)
     print('Day|      Phone       Chat    Observer')
     print('___|' + '_' * 38)
+
+    def write_out(value, size, string):
+        print('{:>{}}'.format(value, size) + string, end='')
+
     for d in list_of_days:
         phone, chat, observer = False, False, False
-        print('{:>2}.| '.format(d), end='')
+        write_out(d, 2, '.| ')
 
         # Phone
         for v in volunteers:
@@ -371,7 +378,7 @@ def main():
                 phone = True
                 break
         if phone:
-            print('{:>10} '.format(volunteer_dic[v]), end='')
+            write_out(volunteer_dic[v], 10, ' ')
         else:
             print('      _    ', end='')
 
@@ -381,7 +388,7 @@ def main():
                 chat = True
                 break
         if chat:
-            print('{:>10} '.format(volunteer_dic[v]), end='')
+            write_out(volunteer_dic[v], 10, ' ')
         elif d in chat_days:
             print('      _    ', end='')
         else:
@@ -393,9 +400,10 @@ def main():
                 observer = True
                 break
         if observer:
-            print('{:>10} '.format(volunteer_dic[v]), end='')
+            write_out(volunteer_dic[v], 10, ' ')
         print()
     print()
+
 
     # print(str(schedule_year) + ' ' + month_name)
     print()
@@ -419,6 +427,7 @@ def main():
         if has:
             print()
     print()
+
 
     # Who works less than willing?
     print('Workloads: ')

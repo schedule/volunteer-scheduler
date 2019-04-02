@@ -201,19 +201,23 @@ def main():
     # Distance between workdays per person
     distance = 4
 
+    def bool_from_string(value):
+        bool(int(value))
+
     i = data_first
     while i <= data_last:
         id = i-3
-        type = f[i][1]
-        days_available = [int(x) for x in f[i][2].split(',')
+        values = [x for x in f[i]]
+        type = values[1]
+        days_available = [int(x) for x in values[2].split(',')
             if x.strip().isdigit()]
-        workload = int(f[i][3])
-        max_weekend_days = int(int(f[i][4]))
-        welcomes_observer = bool(int(f[i][5]))
-        separate_w = bool(int(f[i][6]))
-        alone = bool(int(f[i][7]))
-        cannot_alone = bool(int(f[i][8]))
-        not_with = [volunteer_dic_r[name] for name in f[i][9].split(',')
+        workload = int(values[3])
+        max_weekend_days = int(values[4])
+        welcomes_observer = bool_from_string(values[5])
+        separate_w = bool_from_string(values[6])
+        alone = bool_from_string(values[7])
+        cannot_alone = bool_from_string(values[8])
+        not_with = [volunteer_dic_r[name] for name in values[9].split(',')
             if name]
         use_volunteer_data(id, type, days_available, workload,
             max_weekend_days, welcomes_observer, separate_w, alone,

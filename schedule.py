@@ -292,14 +292,17 @@ def main():
     solver = cp_model.CpSolver()
     solver.Solve(model)
 
+    def horizontal_line():
+        print('____________________________________________________________________________________________________________')
+
+    first_shift = ''
     print()
     print()
     print(str(schedule_year) + ' ' + month_name)
-    print('____________________________________________________________________________________________________________')
-    first_shift = ''
     for i in range(firstday):
         first_shift = ' ' * 14 * i
     for week in weeks:
+        horizontal_line()
         line_0 = ''
         line_1 = ''
         line_2 = ''
@@ -350,7 +353,7 @@ def main():
         print(line_1)
         print(line_2)
         print(line_3)
-        print('____________________________________________________________________________________________________________')
+    horizontal_line()
     print()
     print()
     print()

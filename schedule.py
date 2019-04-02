@@ -293,7 +293,7 @@ def main():
     solver.Solve(model)
 
     def horizontal_line():
-        print('____________________________________________________________________________________________________________')
+        print('_' * 108)
 
     first_shift = ''
     print()
@@ -360,7 +360,7 @@ def main():
 
     # print(str(schedule_year) + ' ' + month_name)
     print('Day|      Phone       Chat    Observer')
-    print('___|______________________________________')
+    print('___|' + '_' * 38)
     for d in list_of_days:
         phone, chat, observer = False, False, False
         print('{:>2}.| '.format(d), end='')

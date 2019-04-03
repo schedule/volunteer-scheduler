@@ -71,6 +71,9 @@ def main():
         week_index += 1
         m += 7
 
+    # Distance between workdays per person
+    distance = 2
+
 
     # Phone: shift 0, Chat: shift 1, Observation: shift 2
     shifts = [0,1,2]
@@ -247,11 +250,16 @@ def main():
 
     # At least four days between shifts per volunteer
     for v in volunteers:
-        days = list_of_days[0:-distance+1]
+        days = list_of_days
         for day in days:
+            a = day-distance
             b = day+distance
+            while a < 1:
+                a += 1
+            while b > days_in_month:
+                b -= 1
             model.Add(sum(schedule[(v, d, s)]
-                for s in shifts for d in range(day, b)) <= 1)
+                for s in shifts for d in range(a, b + 1)) <= 1)
 
     # Observers only work with volunteers they are welcomed by
     for day in list_of_days:
@@ -262,8 +270,8 @@ def main():
                         sum(schedule[(v, d, s)] for s in [0,1]))
                 else:
                     for s in [0,1]:
-                        model.Add(schedule[(o, d, 2)] and
-                            schedule[(v, d, s)] == False)
+                        model.Add((schedule[(o, d, 2)] and
+                            schedule[(v, d, s)]) <= 1)
 
     # Cannot work alone
     for id in all_cannot_alone:
@@ -291,9 +299,6 @@ def main():
             model.Add(sum(schedule[(not_want[0], d, s)] for s in shifts)
                 and sum(schedule[(v, d, s)]
                 for v in them for s in shifts) == False)
-
-    # Distance between workdays per person
-    distance = 4
 
 
     # OBJECTIVE
@@ -452,18 +457,20 @@ def main():
     for v in volunteers:
         works = 0
         more = 0
+        workload = all_workload[v]
         for d in list_of_days:
             for s in shifts:
                 if solver.Value(schedule[(v, d, s)]) == 1:
                     works += 1
-        more = all_workload[v] - works
+        more = workload - works
         if more > 0 or more < 0:
+            name = volunteer_dic[v]
             nonzero_capacity = True
-            print('{:>10} works {} day'.format(volunteer_dic[v], works), end='')
+            print('{:>10} works {} day'.format(name, works), end='')
             if works > 1:
                 print('s', end='')
-            print(' but offered', all_workload[v], 'day', end='')
-            if all_workload[v] > 1:
+            print(' but offered', workload, 'day', end='')
+            if workload > 1:
                 print('s', end='')
             print('.')
     if not nonzero_capacity:

@@ -272,7 +272,7 @@ def main():
                     for s in [0,1]:
                         model.Add((schedule[(o, d, 2)] and
                             schedule[(v, d, s)]) <= 1)
-
+ 
     # Cannot work alone
     for id in all_cannot_alone:
         days = [d for d in all_days_available[id]]

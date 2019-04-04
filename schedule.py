@@ -7,22 +7,28 @@ import calendar
 def main():
     # Get data from csv file
     f = []
-    with open("schedule.csv") as csvfile:
+    with open("schedule.csv", encoding='UTF8') as csvfile:
          reader = csv.reader(csvfile, delimiter=',')
          for row in reader:
              f.append(row)
-    schedule_year = int(f[0][0])
-    schedule_month = int(f[1][0])
-    month_name = calendar.month_name[schedule_month]
-    data_first = 3
-    data_last = len(f) - 1
+    schedule_year = int(f[0][1])
+    schedule_month = int(f[1][1])
+    month_name_dic = {1:'January', 2:'February', 3:'March', 4:'April',
+        5:'May', 6:'June', 7:'July', 8:'August', 9:'September',
+        10:'October', 11:'November', 12:'December'}
+    month_name = month_name_dic[schedule_month]
+    data_lines = []
+    for line in range(5, len(f)):
+        if f[line][3]:
+            data_lines.append(line)
 
-    number_of_volunteers = len(f) - 3
+    number_of_volunteers = len(data_lines)
     # Volunteers ID list [0,1,2,3,...]
     volunteers = [i for i in range(number_of_volunteers)]
 
     # Days in month; firstday 0 if monday
-    firstday, days_in_month = calendar.monthrange(schedule_year, schedule_month)
+    firstday, days_in_month = calendar.monthrange(schedule_year,
+                                                    schedule_month)
     # Days' list [1,2,3,...]
     list_of_days = [i for i in range(1, days_in_month + 1)]
     # First Monday of the month
@@ -199,39 +205,38 @@ def main():
     # volunteer_dic = {ID:name}, volunteer_dic_r = {name:ID}
     volunteer_dic = {}
     volunteer_dic_r = {}
-    i = data_first
-    while i <= data_last:
-        volunteer_dic[i-3] = f[i][0]
-        volunteer_dic_r[f[i][0]] = i-3
-        i += 1
+    id = 0
+    for line in data_lines:
+        volunteer_dic[id] = f[line][1]
+        volunteer_dic_r[f[line][1]] = id
+        id += 1
 
     def bool_from_string(value):
         bool(int(value))
 
-    i = data_first
-    while i <= data_last:
-        id = i-3
-        values = [x for x in f[i]]
-        type = values[1]
+    id = 0
+    for line in data_lines:
+        values = [x for x in f[line]]
+        type = values[2]
 
-        days_available = [int(x) for x in values[2].split(',')
+        days_available = [int(x) for x in values[3].split(',')
             if x.strip().isdigit()]
 
-        workload = int(values[3])
-        max_weekend_days = int(values[4])
+        workload = int(values[4])
+        max_weekend_days = int(values[5])
 
-        welcomes_observer = bool_from_string(values[5])
-        separate_w = bool_from_string(values[6])
-        alone = bool_from_string(values[7])
-        cannot_alone = bool_from_string(values[8])
+        welcomes_observer = bool_from_string(values[6])
+        separate_w = bool_from_string(values[7])
+        alone = bool_from_string(values[8])
+        cannot_alone = bool_from_string(values[9])
 
-        not_with = [volunteer_dic_r[name] for name in values[9].split(',')
+        not_with = [volunteer_dic_r[name] for name in values[10].split(',')
             if name]
 
         use_volunteer_data(id, type, days_available, workload,
             max_weekend_days, welcomes_observer, separate_w, alone,
             cannot_alone, not_with)
-        i += 1
+        id += 1
 
 
     # Adding more constraints
@@ -272,7 +277,7 @@ def main():
                     for s in [0,1]:
                         model.Add((schedule[(o, d, 2)] and
                             schedule[(v, d, s)]) <= 1)
- 
+
     # Cannot work alone
     for id in all_cannot_alone:
         days = [d for d in all_days_available[id]]

@@ -1,4 +1,4 @@
-# Helpline scheduler
+# Helpline's workshift scheduler
 Code written in Python finds the best possible schedule for volunteers while incorporating constrains and special requirements using **[CP-SAT Solver](https://developers.google.com/optimization/cp/cp_solver)** (Constraint Programming - boolean SATisfiability problem Solver).
 
 Java version is in development.
@@ -38,5 +38,6 @@ Each volunteer has to have 4 days between their shifts.
 ## Usage
 1. Select your language: EN/HU/CN
 2. Export corresponding data_XX.csv file into a spreadsheet, fill in your data, then export back into this file.
-3. Change the language setting in the schedule.py file's 4th row if your language is not the default English.
-4. Your csv and py file should be in the same directory.
+3. Execute the program in the selected language:
+
+<code>python3 schedule.py XX</code>

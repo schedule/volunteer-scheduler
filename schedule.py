@@ -1,9 +1,9 @@
 # https://github.com/imreszakal/helpline_scheduler
 
-# Set language:  EN: English,  HU: Hungarian,  CN: Chinese
-language = 'EN'
-
 import sys
+
+language = sys.argv[1]
+
 if language == 'EN':
     from language_EN import *
 elif language == 'HU':

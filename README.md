@@ -36,4 +36,7 @@ Each volunteer has to have 4 days between their shifts.
 <hr>
 
 ## Usage
-Export schedule.csv into a spreadsheet, fill in your data, then export back into this file.
+1. Select your language: EN/HU/CN
+2. Export corresponding data_XX.csv file into a spreadsheet, fill in your data, then export back into this file.
+3. Change the language setting in the schedule.py file's 4th row if your language is not the default English.
+4. Your csv and py file should be in the same directory.

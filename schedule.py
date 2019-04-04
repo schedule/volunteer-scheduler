@@ -1,5 +1,18 @@
 # https://github.com/imreszakal/helpline_scheduler
 
+# Set language:  EN: English,  HU: Hungarian,  CN: Chinese
+language = 'EN'
+
+import sys
+if language == 'EN':
+    from language_EN import *
+elif language == 'HU':
+    from language_HU import *
+elif language ==     'CN':
+    from language_CN import *
+else:
+    sys.exit('Language setting is incorrect.')
+
 from ortools.sat.python import cp_model
 import csv
 import calendar
@@ -7,15 +20,12 @@ import calendar
 def main():
     # Get data from csv file
     f = []
-    with open("schedule.csv", encoding='UTF8') as csvfile:
+    with open(filename, encoding='UTF8') as csvfile:
          reader = csv.reader(csvfile, delimiter=',')
          for row in reader:
              f.append(row)
     schedule_year = int(f[0][1])
     schedule_month = int(f[1][1])
-    month_name_dic = {1:'January', 2:'February', 3:'March', 4:'April',
-        5:'May', 6:'June', 7:'July', 8:'August', 9:'September',
-        10:'October', 11:'November', 12:'December'}
     month_name = month_name_dic[schedule_month]
     data_lines = []
     for line in range(5, len(f)):
@@ -105,7 +115,7 @@ def main():
         all_workload.append(workload)
 
         # Volunteers doing only chat
-        if type == 'C':
+        if type == l_C:
             for d in list_of_days:
                 for s in [0,2]:
                     model.Add(schedule[(id, d, s)] == False)
@@ -115,7 +125,7 @@ def main():
                     model.Add(schedule[(id, d, 1)] == False)
 
         # Volunteers doing chat and phone
-        if type == 'CP':
+        if type == l_CP:
             for d in list_of_days:
                 model.Add(schedule[(id, d, 2)] == False)
                 if d in days_available:
@@ -126,7 +136,7 @@ def main():
                         model.Add(schedule[(id, d, s)] == False)
 
         # Volunteers doing only phone
-        if type == 'P':
+        if type == l_P:
             for d in list_of_days:
                 for s in [1,2]:
                     model.Add(schedule[(id, d, s)] == False)
@@ -136,7 +146,7 @@ def main():
                     model.Add(schedule[(id, d, 0)] == False)
 
         # Volunteers doing observation
-        if type == 'O':
+        if type == l_O:
             observers.append(id)
             for d in list_of_days:
                 for s in [0,1]:
@@ -147,7 +157,7 @@ def main():
                     model.Add(schedule[(id, d, 2)] == False)
 
         # List observers and volunteers welcoming observers
-        if type in ['C', 'CP', 'P'] and welcomes_observer:
+        if type in [l_C, l_CP, l_P] and welcomes_observer:
             welcomers.append(id)
 
         # Total workload
@@ -327,7 +337,7 @@ def main():
     first_shift = ''
     print()
     print()
-    print(str(schedule_year) + ' ' + month_name)
+    print(str(schedule_year) + after_year + ' ' + month_name)
     for i in range(firstday):
         first_shift = ' ' * 14 * i
     for week in weeks:
@@ -353,9 +363,9 @@ def main():
                     phone = True
                     break
             if phone:
-                line_1 += 'P: {:<10}'.format(volunteer_dic[v]) + ' ' * 3
+                line_1 += l_P + ': {:<10}'.format(volunteer_dic[v]) + ' ' * 3
             else:
-                line_1 += 'P: -' + ' ' * 12
+                line_1 += l_P + ': -' + ' ' * 12
 
             # Chat
             for v in volunteers:
@@ -363,9 +373,9 @@ def main():
                     chat = True
                     break
             if chat:
-                line_2 += 'C: {:<10}'.format(volunteer_dic[v]) + ' ' * 3
+                line_2 += l_C + ': {:<10}'.format(volunteer_dic[v]) + ' ' * 3
             elif d in chat_days:
-                line_2 += 'C: -' + ' ' * 12
+                line_2 += l_C + ': -' + ' ' * 12
             else:
                 line_2 += ' ' * 16
 
@@ -375,7 +385,7 @@ def main():
                     observer = True
                     break
             if observer:
-                line_3 += 'O: {:<10}'.format(volunteer_dic[v]) + ' ' * 3
+                line_3 += l_O + ': {:<10}'.format(volunteer_dic[v]) + ' ' * 3
             else:
                 line_3 += ' ' * 16
         print(line_0)
@@ -389,15 +399,19 @@ def main():
 
 
     # print(str(schedule_year) + ' ' + month_name)
-    print('Day|      Phone       Chat    Observer')
-    print('___|' + '_' * 38)
+    if ord(l_Day[-1]) < 128:
+        print('{:>9}|{:>11}{:>11}    {:<8}'.format(l_Day,
+                                                l_Phone, l_Chat, l_Observer))
+    else:
+        print(l_Day + '|' + l_Phone, l_Chat, l_Observer)
+    print('_' * 9 + '|' + '_' * 38)
 
     def write_out(value, size, string):
         print('{:>{}}'.format(value, size) + string, end='')
 
     for d in list_of_days:
         phone, chat, observer = False, False, False
-        write_out(d, 2, '.| ')
+        write_out(d, 8, '.| ')
 
         # Phone
         for v in volunteers:
@@ -440,11 +454,11 @@ def main():
             for s in shifts:
                 if solver.Value(schedule[(v, d, s)]) == 1:
                     if s == 0:
-                        t = 'phone'
+                        t = l_phone
                     elif s == 1:
-                        t = 'chat'
+                        t = l_chat
                     elif s == 2:
-                        t = 'observer'
+                        t = l_observer
                     if has:
                         print(' ' * 12 + '{:>2}. {}'.format(d,t))
                     else:
@@ -457,7 +471,7 @@ def main():
 
 
     # Who works less than willing?
-    print('Workloads: ')
+    print(l_workloads + ': ')
     nonzero_capacity = False
     for v in volunteers:
         works = 0
@@ -471,15 +485,21 @@ def main():
         if more > 0 or more < 0:
             name = volunteer_dic[v]
             nonzero_capacity = True
-            print('{:>10} works {} day'.format(name, works), end='')
-            if works > 1:
-                print('s', end='')
-            print(' but offered', workload, 'day', end='')
-            if workload > 1:
-                print('s', end='')
+            print('{:>10} '.format(name), end='')
+            if l_works_a:
+                print(l_works_a + ' ', end='')
+            print(str(works), l_day_maybe_plural(works), end='')
+            if l_works_b:
+                print(' ' + l_works_b, end='')
+            print(', ', end='')
+            if l_but_offered_a:
+                print(l_but_offered_a + ' ', end='')
+            print(workload, l_day_maybe_plural(workload), end='')
+            if l_but_offered_b:
+                print(' ' + l_but_offered_b, end='')
             print('.')
     if not nonzero_capacity:
-        print('Workloads match originally offered capacity.')
+        print(l_capacity + '.')
     print()
 
 

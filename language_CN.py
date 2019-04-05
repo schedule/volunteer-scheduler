@@ -25,3 +25,5 @@ def l_day_maybe_plural(day):
         return '天'
 l_but_offered_a = '但想工作'
 l_but_offered_b = ''
+l_message_1 = ''
+l_message_2 = ''

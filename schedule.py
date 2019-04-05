@@ -345,8 +345,21 @@ def main():
     solver.Solve(model)
 
 
+    print()
     def horizontal_line():
         print('_' * 108)
+
+    def write_name(name):
+        if ord(name[-1]) < 128:
+            return '{:<9}'.format(name)
+        else:
+            return name.encode('gb18030').ljust(9).decode('gb18030')
+
+    def write_name_r(name):
+        if ord(name[-1]) < 128:
+            return '{:>10}'.format(name)
+        else:
+            return name.encode('gb18030').rjust(10).decode('gb18030')
 
     first_shift = ''
     print()
@@ -377,7 +390,7 @@ def main():
                     phone = True
                     break
             if phone:
-                line_1 += l_P + ': {:<10}'.format(volunteer_dic[v]) + ' ' * 3
+                line_1 += l_P + ': ' + write_name(volunteer_dic[v]) + ' ' * 4
             else:
                 line_1 += l_P + ': -' + ' ' * 12
 
@@ -387,7 +400,7 @@ def main():
                     chat = True
                     break
             if chat:
-                line_2 += l_C + ': {:<10}'.format(volunteer_dic[v]) + ' ' * 3
+                line_2 += l_C + ': ' + write_name(volunteer_dic[v]) + ' ' * 4
             elif d in chat_days:
                 line_2 += l_C + ': -' + ' ' * 12
             else:
@@ -399,7 +412,7 @@ def main():
                     observer = True
                     break
             if observer:
-                line_3 += l_O + ': {:<10}'.format(volunteer_dic[v]) + ' ' * 3
+                line_3 += l_O + ': ' + write_name(volunteer_dic[v]) + ' ' * 4
             else:
                 line_3 += ' ' * 16
         print(line_0)
@@ -420,12 +433,9 @@ def main():
         print(l_Day + '|' + l_Phone, l_Chat, l_Observer)
     print('_' * 9 + '|' + '_' * 38)
 
-    def write_out(value, size, string):
-        print('{:>{}}'.format(value, size) + string, end='')
-
     for d in list_of_days:
         phone, chat, observer = False, False, False
-        write_out(d, 8, '.| ')
+        print('{:>8}'.format(d) + '.| ', end='')
 
         # Phone
         for v in volunteers:
@@ -433,7 +443,7 @@ def main():
                 phone = True
                 break
         if phone:
-            write_out(volunteer_dic[v], 10, ' ')
+            print(write_name_r(volunteer_dic[v]), end=' ')
         else:
             print('      _    ', end='')
 
@@ -443,7 +453,7 @@ def main():
                 chat = True
                 break
         if chat:
-            write_out(volunteer_dic[v], 10, ' ')
+            print(write_name_r(volunteer_dic[v]), end=' ')
         elif d in chat_days:
             print('      _    ', end='')
         else:
@@ -455,7 +465,7 @@ def main():
                 observer = True
                 break
         if observer:
-            write_out(volunteer_dic[v], 10, ' ')
+            print(write_name_r(volunteer_dic[v]), end=' ')
         print()
     print()
 
@@ -476,8 +486,8 @@ def main():
                     if has:
                         print(' ' * 12 + '{:>2}. {}'.format(d,t))
                     else:
-                        print('{:>10}: '.format(volunteer_dic[v])
-                            + '{:>2}. {}'.format(d,t))
+                        print(write_name_r(volunteer_dic[v])
+                            + ': {:>2}. {}'.format(d,t))
                     has = True
         if has:
             print()

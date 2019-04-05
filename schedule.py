@@ -89,12 +89,12 @@ def main():
 
     # weeks dictionary
     weeks = {}
-    m = first_monday
+    m = first_monday - 1
     week_index = 0
     d = 1
     while d <= days_in_month:
         weeks[week_index + 1] = list()
-        while d - week_index * 7 < 8 and d <= days_in_month:
+        while d + m - week_index * 7 < 8 and d <= days_in_month:
             weeks[week_index + 1].append(d)
             d += 1
         week_index += 1

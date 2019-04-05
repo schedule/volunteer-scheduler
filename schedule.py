@@ -1,5 +1,8 @@
 # https://github.com/imreszakal/helpline_scheduler
 
+from ortools.sat.python import cp_model
+import csv
+import calendar
 import sys
 
 try:
@@ -18,16 +21,15 @@ try:
         sys.exit()
 except IndexError:
     print()
+    print('Error: Missing language code.')
+    print()
     print('Usage:')
     print('1. Choose language: EN/HU/CN.')
-    print('2. Export corresponding data_XX.csv file into a spreadsheet, fill in your data, then export back into this file.')
+    print('2. Export corresponding data_XX.csv file into a spreadsheet, '
+            'fill in your data, then export back into this file.')
     print('3. Run command: python3 schedule.py XX')
     print()
     sys.exit()
-
-from ortools.sat.python import cp_model
-import csv
-import calendar
 
 def main():
     # Get data from csv file

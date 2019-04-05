@@ -34,7 +34,7 @@ except IndexError:
 def main():
     # Get data from csv file
     f = []
-    with open(filename, encoding='UTF8') as csvfile:
+    with open(filename, encoding=encoding) as csvfile:
          reader = csv.reader(csvfile, delimiter=',')
          for row in reader:
              f.append(row)
@@ -89,7 +89,7 @@ def main():
 
     # weeks dictionary
     weeks = {}
-    m = first_monday - 1
+    m = firstday
     week_index = 0
     d = 1
     while d <= days_in_month:
@@ -100,14 +100,13 @@ def main():
         week_index += 1
     week_count = len(weeks)
     week_indexes = [i + 1 for i in range(week_count)]
-    for i in week_indexes:
-        print(weeks[i])
 
     # Distance between workdays per person
     distance = 2
 
-    # Phone: shift 0, Chat: shift 1, Observation: shift 2
-    shifts = [0,1,2]
+    # Phone: shift 0, Chat: shift 1, Observation: shift 2,
+    # Remainder: shift 3
+    shifts = [0,1,2,3]
 
     # Creates the model.
     model = cp_model.CpModel()
@@ -135,9 +134,11 @@ def main():
                 for s in [0,2]:
                     model.Add(schedule[(id, d, s)] == False)
                 if d in days_available:
-                    model.Add(schedule[(id, d, 1)] <= 1)
+                    model.Add(sum(schedule[(id, d, s)]
+                            for s in [1,3]) <= 1)
                 else:
-                    model.Add(schedule[(id, d, 1)] == False)
+                    for s in [1,3]:
+                        model.Add(schedule[(id, d, s)] == False)
 
         # Volunteers doing chat and phone
         if type == l_CP:
@@ -145,9 +146,9 @@ def main():
                 model.Add(schedule[(id, d, 2)] == False)
                 if d in days_available:
                     model.Add(sum(schedule[(id, d, s)]
-                            for s in [0,1]) <= 1)
+                            for s in [0,1,3]) <= 1)
                 else:
-                    for s in [0,1]:
+                    for s in [0,1,3]:
                         model.Add(schedule[(id, d, s)] == False)
 
         # Volunteers doing only phone
@@ -156,15 +157,17 @@ def main():
                 for s in [1,2]:
                     model.Add(schedule[(id, d, s)] == False)
                 if d in days_available:
-                    model.Add(schedule[(id, d, 0)] <= 1)
+                    model.Add(sum(schedule[(id, d, s)]
+                            for s in [0,3]) <= 1)
                 else:
-                    model.Add(schedule[(id, d, 0)] == False)
+                    for s in [0,3]:
+                        model.Add(schedule[(id, d, s)] == False)
 
         # Volunteers doing observation
         if type == l_O:
             observers.append(id)
             for d in list_of_days:
-                for s in [0,1]:
+                for s in [0,1,3]:
                     model.Add(schedule[(id, d, s)] == False)
                 if d in days_available:
                     model.Add(schedule[(id, d, 2)] <= 1)
@@ -277,6 +280,8 @@ def main():
         else:
             for v in volunteers:
                 model.Add(schedule[(v, d, 1)] == False)
+        # Plus shifts every day
+        model.Add(sum(schedule[(v, d, 3)] for v in volunteers) <= 1)
 
     # At least four days between shifts per volunteer
     for v in volunteers:
@@ -334,8 +339,12 @@ def main():
     # OBJECTIVE
 
     # Filled phone shifts has the greatest priority
-    model.Maximize(sum(2 * schedule[(v, d, 0)] + schedule[(v, d, 1)]
-        + schedule[(v, d, 2)]
+    model.Maximize(sum(100 * schedule[(v, d, 0)] + 50 * schedule[(v, d, 1)]
+        + 20 * schedule[(v, d, 2)]
+        + 4 * (schedule[(v, d, 3)] and schedule[(v, d, 0)])
+        + 3 * (schedule[(v, d, 3)] and schedule[(v, d, 1)])
+        + 2 * (schedule[(v, d, 3)] and schedule[(v, d, 2)])
+        + 1 * (schedule[(v, d, 3)] and schedule[(v, d, 3)])
         for d in list_of_days for v in volunteers))
 
 
@@ -345,22 +354,21 @@ def main():
     solver = cp_model.CpSolver()
     solver.Solve(model)
 
+    vol_l = {}
+    vol_r = {}
+    for v in volunteers:
+        vol_l[v] = volunteer_dic[v].ljust(11)
+        vol_r[v] = volunteer_dic[v].rjust(11)
 
     print()
     def horizontal_line():
         print('_' * 108)
 
-    def write_name(name):
-        if ord(name[-1]) < 1000:
-            return '{:<9}'.format(name)
-        else:
-            return name.encode('gb18030').ljust(9).decode('gb18030')
+    def write_l(name, width):
+        return name.ljust(width)
 
-    def write_name_r(name):
-        if ord(name[-1]) < 128:
-            return '{:>10}'.format(name)
-        else:
-            return name.encode('gb18030').rjust(10).decode('gb18030')
+    def write_r(name, width):
+        return name.rjust(width)
 
     first_shift = ''
     print()
@@ -374,15 +382,17 @@ def main():
         line_1 = ''
         line_2 = ''
         line_3 = ''
+        line_4 = ''
         if first_shift:
             line_0 += first_shift
             line_1 += first_shift
             line_2 += first_shift
             line_3 += first_shift
+            line_4 += first_shift
             first_shift = 0
 
         for d in weeks[i]:
-            phone, chat, observer = False, False, False
+            phone, chat, observer, plus = False, False, False, False
             line_0 += '{:<2}'.format(d) + ' ' * 14
 
             # Phone
@@ -391,7 +401,7 @@ def main():
                     phone = True
                     break
             if phone:
-                line_1 += l_P + ': ' + write_name(volunteer_dic[v]) + ' ' * 4
+                line_1 += l_P + ': ' + vol_l[v] + ' ' * 2
             else:
                 line_1 += l_P + ': -' + ' ' * 12
 
@@ -401,7 +411,7 @@ def main():
                     chat = True
                     break
             if chat:
-                line_2 += l_C + ': ' + write_name(volunteer_dic[v]) + ' ' * 4
+                line_2 += l_C + ': ' + vol_l[v] + ' ' * 2
             elif d in chat_days:
                 line_2 += l_C + ': -' + ' ' * 12
             else:
@@ -413,13 +423,24 @@ def main():
                     observer = True
                     break
             if observer:
-                line_3 += l_O + ': ' + write_name(volunteer_dic[v]) + ' ' * 4
+                line_3 += l_O + ': ' + vol_l[v] + ' ' * 2
             else:
                 line_3 += ' ' * 16
+
+            # Plus
+            for v in volunteers:
+                if solver.Value(schedule[(v, d, 3)]) == 1:
+                    plus = True
+                    break
+            if plus:
+                line_4 += l_E + ': ' + vol_l[v] + ' ' * 2
+            else:
+                line_4 += ' ' * 16
         print(line_0)
         print(line_1)
         print(line_2)
         print(line_3)
+        print(line_4)
     horizontal_line()
     print()
     print()
@@ -427,16 +448,17 @@ def main():
 
 
     # print(str(schedule_year) + ' ' + month_name)
-    if ord(l_Day[-1]) < 128:
-        print('{:>9}|{:>11}{:>11}    {:<8}'.format(l_Day,
-                                                l_Phone, l_Chat, l_Observer))
+    if ord(l_Day[-1]) < 1000:
+        print('{:>9}|{:>11}{:>11}{:>11}{:>11}'.format(l_Day,
+                                l_Phone, l_Chat, l_Observer, l_Extra))
     else:
         print(l_Day + '|' + l_Phone, l_Chat, l_Observer)
-    print('_' * 9 + '|' + '_' * 38)
+    print('_' * 9 + '|' + '_' * 48)
 
     for d in list_of_days:
-        phone, chat, observer = False, False, False
-        print('{:>8}'.format(d) + '.| ', end='')
+        line = ''
+        phone, chat, observer, plus = False, False, False, False
+        line += '{:>8}.|'.format(d)
 
         # Phone
         for v in volunteers:
@@ -444,9 +466,9 @@ def main():
                 phone = True
                 break
         if phone:
-            print(write_name_r(volunteer_dic[v]), end=' ')
+            line += vol_r[v]
         else:
-            print('      _    ', end='')
+            line += write_r('      _    ', 11)
 
         # Chat
         for v in volunteers:
@@ -454,11 +476,11 @@ def main():
                 chat = True
                 break
         if chat:
-            print(write_name_r(volunteer_dic[v]), end=' ')
+            line += vol_r[v]
         elif d in chat_days:
-            print('      _    ', end='')
+            line += write_r('      _    ', 11)
         else:
-            print(' ' * 11, end='')
+            line += write_r(' ' * 11, 11)
 
         # Observer
         for v in volunteers:
@@ -466,8 +488,18 @@ def main():
                 observer = True
                 break
         if observer:
-            print(write_name_r(volunteer_dic[v]), end=' ')
-        print()
+            line += vol_r[v]
+        else:
+            line += write_r(' ' * 11, 11)
+
+        # Plus
+        for v in volunteers:
+            if solver.Value(schedule[(v, d, 3)]) == 1:
+                plus = True
+                break
+        if plus:
+            line += vol_r[v]
+        print(line)
     print()
 
 
@@ -484,11 +516,12 @@ def main():
                         t = l_chat
                     elif s == 2:
                         t = l_observer
+                    elif s == 3:
+                        t = l_extra
                     if has:
-                        print(' ' * 12 + '{:>2}. {}'.format(d,t))
+                        print(' ' * 11 + '  {:>2}. {}'.format(d,t))
                     else:
-                        print(write_name_r(volunteer_dic[v])
-                            + ': {:>2}. {}'.format(d,t))
+                        print(vol_r[v] + ': {:>2}. {}'.format(d,t))
                     has = True
         if has:
             print()
@@ -510,7 +543,7 @@ def main():
         if more > 0 or more < 0:
             name = volunteer_dic[v]
             nonzero_capacity = True
-            print('{:>10} '.format(name), end='')
+            print('    {:>10} '.format(name), end='')
             if l_works_a:
                 print(l_works_a + ' ', end='')
             print(str(works), l_day_maybe_plural(works), end='')

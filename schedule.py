@@ -53,10 +53,15 @@ def main():
     # Days in month; firstday 0 if monday
     firstday, days_in_month = calendar.monthrange(schedule_year,
                                                     schedule_month)
+
     # Days' list [1,2,3,...]
     list_of_days = [i for i in range(1, days_in_month + 1)]
     # First Monday of the month
-    first_monday = firstday + 1
+
+    if firstday == 0:
+        first_monday = 1
+    else:
+        first_monday = 8 - firstday
 
     # Chat days' list (Mondays and Wednesdays)
     chat_days = []
@@ -82,28 +87,24 @@ def main():
         weekend_days.append(sun)
         sun += 7
 
-    # Separate lists for each week
+    # weeks dictionary
+    weeks = {}
     m = first_monday
-    week_count = 0
-    if m != 1:
-        week_count +=1
-    days = days_in_month
-    while days > 0:
-        week_count += 1
-        days -= 7
-    weeks = [list() for i in range(week_count)]
     week_index = 0
     d = 1
     while d <= days_in_month:
-        while (d - m) / 7 < 1 and d <= days_in_month:
-            weeks[week_index].append(d)
+        weeks[week_index + 1] = list()
+        while d - week_index * 7 < 8 and d <= days_in_month:
+            weeks[week_index + 1].append(d)
             d += 1
         week_index += 1
-        m += 7
+    week_count = len(weeks)
+    week_indexes = [i + 1 for i in range(week_count)]
+    for i in week_indexes:
+        print(weeks[i])
 
     # Distance between workdays per person
     distance = 2
-
 
     # Phone: shift 0, Chat: shift 1, Observation: shift 2
     shifts = [0,1,2]
@@ -186,9 +187,9 @@ def main():
 
         # Wants shifts to be on different weeks
         if separate_w:
-            for week in weeks:
+            for i in weeks:
                 model.Add(sum(schedule[(id, d, s)]
-                    for s in shifts for d in week
+                    for s in shifts for d in weeks[i]
                     if d in days_available) <= 1)
 
         # Wants to work alone
@@ -350,7 +351,7 @@ def main():
         print('_' * 108)
 
     def write_name(name):
-        if ord(name[-1]) < 128:
+        if ord(name[-1]) < 1000:
             return '{:<9}'.format(name)
         else:
             return name.encode('gb18030').ljust(9).decode('gb18030')
@@ -365,9 +366,9 @@ def main():
     print()
     print()
     print(str(schedule_year) + after_year + ' ' + month_name)
-    for i in range(firstday):
-        first_shift = ' ' * 14 * i
-    for week in weeks:
+    first_shift = ' ' * 16 * firstday
+
+    for i in week_indexes:
         horizontal_line()
         line_0 = ''
         line_1 = ''
@@ -380,7 +381,7 @@ def main():
             line_3 += first_shift
             first_shift = 0
 
-        for d in week:
+        for d in weeks[i]:
             phone, chat, observer = False, False, False
             line_0 += '{:<2}'.format(d) + ' ' * 14
 
@@ -526,6 +527,13 @@ def main():
         print(l_capacity + '.')
     print()
 
+    if l_message_1:
+        print()
+        print()
+        print(l_message_1)
+        print(l_message_2)
+        print()
+        print()
 
 if __name__ == '__main__':
     main()

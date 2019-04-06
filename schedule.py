@@ -379,6 +379,7 @@ def main():
             pass
         solution[(v, 0)] = tel1 + tel2
 
+    # Create txt file
     timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M')
     def fprint(*output):
         if output:
@@ -387,7 +388,6 @@ def main():
         else:
             w = '\n'
             print()
-        # Create txt file
         with open('schedule_{}_{}____{}.txt'.format(schedule_year,
                         schedule_month, timestamp), 'a', encoding='UTF8') as f:
             f.write("{}\n".format(w))
@@ -637,6 +637,7 @@ def main():
     # Create csv file
     with open('schedule_{}_{}____{}.csv'.format(schedule_year,
                     schedule_month, timestamp), 'a', encoding='UTF8') as f:
+        f.write("{} {}\n".format(schedule_year, month_name.lower()))
         f.write("{},{},{},{}\n".format(l_Name, l_Phone, l_Chat, l_Observer))
         for v in volunteers:
             line = ''

@@ -11,7 +11,7 @@ try:
         from language_EN import *
     elif language == 'HU':
         from language_HU import *
-    elif language ==     'CN':
+    elif language == 'CN':
         from language_CN import *
     else:
         print()
@@ -294,7 +294,7 @@ def main():
             while b > days_in_month:
                 b -= 1
             model.Add(sum(schedule[(v, d, s)]
-                for s in shifts for d in range(a, b + 1)) <= 1)
+                for s in shifts for d in range(a, b)) <= 1)
 
     # Observers only work with volunteers they are welcomed by
     for day in list_of_days:
@@ -357,24 +357,34 @@ def main():
     vol_l = {}
     vol_r = {}
     for v in volunteers:
+        width = 11
         if ord(volunteer_dic[v][0]) < 1000:
-            vol_l[v] = volunteer_dic[v].ljust(11)
-            vol_r[v] = volunteer_dic[v].rjust(11)
+            vol_l[v] = volunteer_dic[v].ljust(width)
+            vol_r[v] = volunteer_dic[v].rjust(width)
         else:
-            vol_l[v] = volunteer_dic[v].encode(encoding).ljust(11).decode(encoding)
-            vol_r[v] = volunteer_dic[v].encode(encoding).rjust(11).decode(encoding)
+            vol_l[v] = volunteer_dic[v].encode(encoding).ljust(width).decode(encoding)
+            # while len(vol_l[v]) < width:
+                # vol_l[v] += ' '
+            vol_r[v] = volunteer_dic[v].encode(encoding).rjust(width).decode(encoding)
+            # while len(vol_l[v]) < width:
+                # vol_l[v] = ' ' + vol_l[v]
+    # kinai: XXX: -3, XX: -2, X: -1
 
     print()
     def horizontal_line():
         print('_' * 108)
 
     def write_l(name, width):
-        # return name.ljust(width)
-        return name.encode(encoding).ljust(width).decode(encoding)
+        if ord(volunteer_dic[v][0]) < 1000:
+            return name.ljust(width)
+        else:
+            return name.encode(encoding).ljust(width).decode(encoding)
 
     def write_r(name, width):
-        # return name.rjust(width)
-        return name.encode(encoding).ljust(width).decode(encoding)
+        if ord(volunteer_dic[v][0]) < 1000:
+            return name.rjust(width)
+        else:
+            return name.encode(encoding).rjust(width).decode(encoding)
 
     first_shift = ''
     print()
@@ -433,10 +443,10 @@ def main():
             else:
                 line_3 += ' ' * 16
 
-            # Plus
+            # Extra
             for v in volunteers:
                 if solver.Value(schedule[(v, d, 3)]) == 1:
-                    plus = True
+                    extra = True
                     break
             if extra:
                 line_4 += l_E + ': ' + vol_l[v] + ' ' * 2

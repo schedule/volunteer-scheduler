@@ -34,7 +34,7 @@ except IndexError:
 def main():
     # Get data from csv file
     f = []
-    with open(filename, encoding=encoding) as csvfile:
+    with open(filename, encoding='UTF8') as csvfile:
          reader = csv.reader(csvfile, delimiter=',')
          for row in reader:
              f.append(row)
@@ -357,18 +357,24 @@ def main():
     vol_l = {}
     vol_r = {}
     for v in volunteers:
-        vol_l[v] = volunteer_dic[v].ljust(11)
-        vol_r[v] = volunteer_dic[v].rjust(11)
+        if ord(volunteer_dic[v][0]) < 1000:
+            vol_l[v] = volunteer_dic[v].ljust(11)
+            vol_r[v] = volunteer_dic[v].rjust(11)
+        else:
+            vol_l[v] = volunteer_dic[v].encode(encoding).ljust(11).decode(encoding)
+            vol_r[v] = volunteer_dic[v].encode(encoding).rjust(11).decode(encoding)
 
     print()
     def horizontal_line():
         print('_' * 108)
 
     def write_l(name, width):
-        return name.ljust(width)
+        # return name.ljust(width)
+        return name.encode(encoding).ljust(width).decode(encoding)
 
     def write_r(name, width):
-        return name.rjust(width)
+        # return name.rjust(width)
+        return name.encode(encoding).ljust(width).decode(encoding)
 
     first_shift = ''
     print()
@@ -392,7 +398,7 @@ def main():
             first_shift = 0
 
         for d in weeks[i]:
-            phone, chat, observer, plus = False, False, False, False
+            phone, chat, observer, extra = False, False, False, False
             line_0 += '{:<2}'.format(d) + ' ' * 14
 
             # Phone
@@ -432,7 +438,7 @@ def main():
                 if solver.Value(schedule[(v, d, 3)]) == 1:
                     plus = True
                     break
-            if plus:
+            if extra:
                 line_4 += l_E + ': ' + vol_l[v] + ' ' * 2
             else:
                 line_4 += ' ' * 16
@@ -452,7 +458,7 @@ def main():
         print('{:>9}|{:>11}{:>11}{:>11}{:>11}'.format(l_Day,
                                 l_Phone, l_Chat, l_Observer, l_Extra))
     else:
-        print(l_Day + '|' + l_Phone, l_Chat, l_Observer)
+        print(l_Day + '|' + l_Phone, l_Chat, l_Observer, l_Extra)
     print('_' * 9 + '|' + '_' * 48)
 
     for d in list_of_days:

@@ -46,7 +46,7 @@ Requires 64-bit Python 3.7
 2. Export corresponding data/data_XX.csv file into a spreadsheet, fill in your data, then export back into this file.
 3. Execute the program from its directory:
 
-<code>python3 __main__.py</code>
+<code>python3 \_\_main\_\_.py</code>
 
 ## Output
 

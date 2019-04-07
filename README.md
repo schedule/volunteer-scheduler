@@ -47,3 +47,8 @@ Requires 64-bit Python 3.7
 3. Execute the program from its directory:
 
 <code>python3 schedule.py</code>
+
+## Output
+
+1. Prints results into the terminal and saves it into schedule_YYYY_MM____YYYYMMDD_hhmm.txt.
+2. Saves results into schedule_YYYY_MM____YYYYMMDD_hhmm.csv which can be conveniently imported into a spreadsheet.

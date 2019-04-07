@@ -1,4 +1,4 @@
-filename = 'data_HU.csv'
+filename = 'data/data_HU.csv'
 encoding = 'UTF8'
 after_year = '.'
 month_name_dic = {1:'Január', 2:'Február', 3:'Március', 4:'Április',

@@ -1,4 +1,4 @@
-filename = 'data_CN.csv'
+filename = 'data/data_CN.csv'
 encoding = 'gb18030'
 after_year = '年'
 month_name_dic = {1:'一月', 2:'二月', 3:'三月', 4:'四月',

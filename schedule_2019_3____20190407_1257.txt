@@ -1,0 +1,175 @@
+
+
+
+
+
+
+2019. Március
+____________________________________________________________________________________________________________
+                                                                1               2               3               
+                                                                T: Liza         T: -            T: Krisz        
+                                                                                                                
+                                                                                                                
+                                                                                                                
+____________________________________________________________________________________________________________
+4               5               6               7               8               9               10              
+T: Szása        T: Lukács       T: Jeromos      T: Némó         T: Márk         T: Geri         T: Martin       
+C: Áron                         C: Tamara                                                                       
+                                                                                                                
+                                                T: Hanga        T: Julcsi                                       
+____________________________________________________________________________________________________________
+11              12              13              14              15              16              17              
+T: Zelma        T: Áron         T: Adél         T: Némó         T: Gréta        T: Martin       T: Geri         
+C: Gréta                        C: Jeromos                                                                      
+                                                                                                                
+                                                T: Justin                                                       
+____________________________________________________________________________________________________________
+18              19              20              21              22              23              24              
+T: Nimród       T: Hanga        T: Adél         T: Justin       T: Liza         T: Geri         T: Krisz        
+C: Krisz                        C: Tamara                                                                       
+                                                                                                                
+                                                                                                                
+____________________________________________________________________________________________________________
+25              26              27              28              29              30              31              
+T: Zelma        T: Lukács       T: Nimród       T: Szása        T: Márk         T: Martin       T: Krisz        
+C: Gréta                        C: Tamara                                                                       
+                                                                                                                
+                                                                                T: Julcsi                       
+____________________________________________________________________________________________________________
+
+
+
+
+
+
+      Nap|    Telefon       Cset   Hospitál  Telefon 2
+_________|________________________________________________
+       1.|       Liza                      
+       2.|      _                          
+       3.|      Krisz                      
+       4.|      Szása       Áron           
+       5.|     Lukács                      
+       6.|    Jeromos     Tamara           
+       7.|       Némó                            Hanga
+       8.|       Márk                           Julcsi
+       9.|       Geri                      
+      10.|     Martin                      
+      11.|      Zelma      Gréta           
+      12.|       Áron                      
+      13.|       Adél    Jeromos           
+      14.|       Némó                           Justin
+      15.|      Gréta                      
+      16.|     Martin                      
+      17.|       Geri                      
+      18.|     Nimród      Krisz           
+      19.|      Hanga                      
+      20.|       Adél     Tamara           
+      21.|     Justin                      
+      22.|       Liza                      
+      23.|       Geri                      
+      24.|      Krisz                      
+      25.|      Zelma      Gréta           
+      26.|     Lukács                      
+      27.|     Nimród     Tamara           
+      28.|      Szása                      
+      29.|       Márk                      
+      30.|     Martin                           Julcsi
+      31.|      Krisz                      
+
+
+
+
+      Hanga:  7. telefon
+             19. telefon
+
+
+     Lukács:  5. telefon
+             26. telefon
+
+
+      Krisz:  3. telefon
+             18. cset
+             24. telefon
+             31. telefon
+
+
+    Jeromos:  6. telefon
+             13. cset
+
+
+     Julcsi:  8. telefon
+             30. telefon
+
+
+     Justin: 14. telefon
+             21. telefon
+
+
+     Nimród: 18. telefon
+             27. telefon
+
+
+      Gréta: 11. cset
+             15. telefon
+             25. cset
+
+
+       Liza:  1. telefon
+             22. telefon
+
+
+     Martin: 10. telefon
+             16. telefon
+             30. telefon
+
+
+      Zelma: 11. telefon
+             25. telefon
+
+
+      Szása:  4. telefon
+             28. telefon
+
+
+       Áron:  4. cset
+             12. telefon
+
+
+       Némó:  7. telefon
+             14. telefon
+
+
+       Márk:  8. telefon
+             29. telefon
+
+
+       Geri:  9. telefon
+             17. telefon
+             23. telefon
+
+
+     Tamara:  6. cset
+             20. cset
+             27. cset
+
+
+       Adél: 13. telefon
+             20. telefon
+
+
+
+
+Kapacitások: 
+A munkabeosztás minden kapacitást maradéktalanul felhasznál.
+
+
+
+
+
+
+"Köszönöm, hogy rendelkezésre álltok a hozzátok fordulóknak."
+ - A beosztást elkészítő szoftver írója (imreszakal.com)
+
+
+
+

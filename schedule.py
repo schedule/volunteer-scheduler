@@ -10,11 +10,11 @@ from lxml import etree as e
 try:
    language = sys.argv[1]
    if language == 'EN':
-       from language_EN import *
+       from lang.language_EN import *
    elif language == 'HU':
-       from language_HU import *
+       from lang.language_HU import *
    elif language == 'CN':
-       from language_CN import *
+       from lang.language_CN import *
    else:
        fprint()
        fprint('Error: Wrong language code.')
@@ -634,6 +634,9 @@ def main():
          fprint()
          fprint()
 
+    print('Created', 'schedule_{}_{}____{}.txt'.format(schedule_year,
+                    schedule_month, timestamp))
+
     # Create csv file
     with open('schedule_{}_{}____{}.csv'.format(schedule_year,
                     schedule_month, timestamp), 'a', encoding='UTF8') as f:
@@ -658,6 +661,10 @@ def main():
                     line += ','
 
             f.write(line + '\n')
+        print('Created', 'schedule_{}_{}____{}.csv'.format(schedule_year,
+                        schedule_month, timestamp))
+    print()
+
 
 if __name__ == '__main__':
     main()

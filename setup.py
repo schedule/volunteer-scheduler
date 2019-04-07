@@ -35,7 +35,7 @@ setup(
     # For a discussion on single-sourcing the version across setup.py and the
     # project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='2019.04.07',  # Required
+    version='2019.04.07post.12',  # Required
 
     # This is a one-line description or tagline of what your project does. This
     # corresponds to the "Summary" metadata field:
@@ -72,7 +72,7 @@ setup(
 
     # This should be your name or the name of the organization which owns the
     # project.
-    author='Imre Szakál',  # Optional
+    author='Imre Szakál (imreszakal.com)',  # Optional
 
     # This should be a valid email address corresponding to the author listed
     # above.
@@ -89,7 +89,7 @@ setup(
         'Development Status :: 4 - Beta',
 
         # Indicate who your project is intended for
-        'Intended Audience :: End Users',
+        'Intended Audience :: End Users/Desktop',
         'Topic :: Office/Business :: Scheduling',
 
         # Pick your license as you wish
@@ -153,7 +153,8 @@ setup(
     # If using Python 2.6 or earlier, then these have to be included in
     # MANIFEST.in as well.
     package_data={  # Optional
-        'lang': ['language_EN.py', 'language_HU.py', 'language_CN.py'],
+        '': ['*.csv'],
+        # 'lang': ['lang/language_EN.py', 'lang/language_HU.py', 'lang/language_CN.py'],
     },
 
     # Although 'package_data' is the preferred approach, in some case you may
@@ -161,8 +162,11 @@ setup(
     # http://docs.python.org/3.4/distutils/setupscript.html#installing-additional-files
     #
     # In this case, 'data_file' will be installed into '<sys.prefix>/my_data'
-    data_files=[('data', ['data_EN.csv'], ['data_HU.csv'],
-    ['data_CN.csv'])],  # Optional
+    # data_files=[('helpline-scheduler/data', ['helpline-scheduler/data/data_EN.csv',
+    # 'helpline-scheduler/data/data_HU.csv',
+    # 'helpline-scheduler/data/data_CN.csv'])],  # Optional
+
+    include_package_data=True,
 
     # To provide executable scripts, use entry points in preference to the
     # "scripts" keyword. Entry points provide cross-platform support and allow
@@ -173,7 +177,7 @@ setup(
     # executes the function `main` from this package when invoked:
     entry_points={  # Optional
         'console_scripts': [
-            'schedule=schedule:main',
+            'helpline-scheduler=__main__:main',
         ],
     },
 
@@ -188,7 +192,7 @@ setup(
     # what's used to render the link text on PyPI.
     project_urls={  # Optional
         'Bug Reports': 'https://github.com/imreszakal/helpline_scheduler/issues',
-        'Funding': 'PayPal.Me/imreszakal',
+        'Funding': 'https://PayPal.Me/imreszakal',
         # 'Say Thanks!': 'http://saythanks.io/to/example',
         'Source': 'https://github.com/imreszakal/helpline_scheduler',
     },

@@ -6,32 +6,17 @@ import calendar
 import sys
 import datetime
 from lxml import etree as e
+import config
 
-try:
-   language = sys.argv[1]
-   if language == 'EN':
-       from lang.language_EN import *
-   elif language == 'HU':
-       from lang.language_HU import *
-   elif language == 'CN':
-       from lang.language_CN import *
-   else:
-       fprint()
-       fprint('Error: Wrong language code.')
-       fprint('Choose between EN/HU/CN.')
-       fprint()
-       sys.exit()
-except IndexError:
-   fprint()
-   fprint('Error: Missing language code.')
-   fprint()
-   fprint('Usage:')
-   fprint('1. Choose language: EN/HU/CN.')
-   fprint('2. Export corresponding data_XX.csv file into a spreadsheet, '
-           'fill in your data, then export back into this file.')
-   fprint('3. Run command: python3 schedule.py XX')
-   fprint()
-   sys.exit()
+language = config.language
+if language == 'EN':
+   from lang.language_EN import *
+elif language == 'HU':
+   from lang.language_HU import *
+elif language == 'CN':
+   from lang.language_CN import *
+else:
+    print('You need to set language in config.py.')
 
 def main():
     # Get data from csv file

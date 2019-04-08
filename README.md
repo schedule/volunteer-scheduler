@@ -4,7 +4,7 @@ Code written in Python finds the best possible schedule for volunteers while inc
 Java version is in development.
 
 ### The problem
-Arranging volunteers for a helpline service for the period of one month. 
+Arranging volunteers for a helpline service for the period of one month.
 
 There are three types of work that could be done on the same day:
 - Phone shift: Every day.
@@ -23,7 +23,7 @@ Properties of each volunteer:
 - List of people they do not want to work with.
 
 Each volunteer has to have 4 days between their shifts.
- 
+
 ### Priorities:
 1. Have minimum one volunteer for each day.
 2. Fill chat shifts.
@@ -43,6 +43,7 @@ Requires 64-bit Python 3.7
 
 ## Usage
 1. Select your language in config.py: EN/HU/CN
+   Alternatively you can create your XX language extension by creating the corresponding data_XX.csv and language_XX.py files.
 2. Export corresponding data/data_XX.csv file into a spreadsheet, fill in your data, then export back into this file.
 3. Execute the program from its directory:
 

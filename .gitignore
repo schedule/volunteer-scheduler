@@ -1,6 +1,8 @@
 
 .DS_Store
 *.pyc
+*.txt
+schedule*.csv
 dist
 build
 helpline_scheduler.egg-info

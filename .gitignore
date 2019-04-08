@@ -6,3 +6,4 @@ schedule*.csv
 dist
 build
 helpline_scheduler.egg-info
+setup.py

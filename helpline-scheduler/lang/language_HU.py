@@ -1,9 +1,11 @@
 filename = 'data/data_HU.csv'
 encoding = 'UTF8'
 after_year = '.'
-month_name_dic = {1:'Január', 2:'Február', 3:'Március', 4:'Április',
-    5:'Május', 6:'Június', 7:'Július', 8:'Augusztus', 9:'Szeptember',
-    10:'Október', 11:'November', 12:'December'}
+month_name_dic = {1:'január', 2:'február', 3:'március', 4:'április',
+    5:'május', 6:'június', 7:'július', 8:'augusztus', 9:'szeptember',
+    10:'október', 11:'november', 12:'december'}
+weekday_name_dic = {1:'Hétfő', 2:'Kedd', 3:'Szerda', 4:'Csütörtök',
+    5:'Péntek', 6:'Szombat', 7:'Vasárnap'}
 l_Name = 'Név'
 l_C = 'C'
 l_CP = 'CT'

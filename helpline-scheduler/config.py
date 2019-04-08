@@ -1,2 +1,2 @@
 # Choose language: EN / HU / CN
-language = 'EN'
+language = 'HU'

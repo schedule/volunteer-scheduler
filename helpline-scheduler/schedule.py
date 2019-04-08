@@ -4,6 +4,7 @@ from ortools.sat.python import cp_model
 import csv
 import calendar
 import sys
+import os
 import datetime
 from lxml import etree as e
 import config
@@ -364,6 +365,10 @@ def main():
             pass
         solution[(v, 0)] = tel1 + tel2
 
+    # Create directories if it do not exist
+    if not os.path.exists('output'):
+        os.makedirs('output')
+
     # Create txt file
     timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M')
     def fprint(*output):
@@ -373,7 +378,7 @@ def main():
         else:
             w = '\n'
             print()
-        with open('schedule_{}_{}____{}.txt'.format(schedule_year,
+        with open('output/schedule_{}_{}____{}.txt'.format(schedule_year,
                         schedule_month, timestamp), 'a', encoding='UTF8') as f:
             f.write("{}\n".format(w))
 
@@ -495,9 +500,9 @@ def main():
     # fprint(str(schedule_year) + ' ' + month_name)
     if ord(l_Day[-1]) < 1000:
          fprint('{:>9}|{:>11}{:>11}{:>11}{:>11}'.format(l_Day,
-                                 l_Phone, l_Chat, l_Observer, l_Extra))
+                                 l_Phone, l_Extra, l_Chat, l_Observer))
     else:
-         fprint(l_Day + '|' + l_Phone, l_Chat, l_Observer, l_Extra)
+         fprint(l_Day + '|' + l_Phone, l_Extra, l_Chat, l_Observer)
     fprint('_' * 9 + '|' + '_' * 48)
 
     for d in list_of_days:
@@ -514,6 +519,16 @@ def main():
              line += vol_r[v]
          else:
              line += write_r('      _    ', 11)
+
+         # Extra
+         for v in volunteers:
+             if solver.Value(schedule[(v, d, 3)]) == 1:
+                 plus = True
+                 break
+         if plus:
+             line += vol_r[v]
+         else:
+             line += write_r(' ' * 11, 11)
 
          # Chat
          for v in volunteers:
@@ -537,13 +552,6 @@ def main():
          else:
              line += write_r(' ' * 11, 11)
 
-         # Plus
-         for v in volunteers:
-             if solver.Value(schedule[(v, d, 3)]) == 1:
-                 plus = True
-                 break
-         if plus:
-             line += vol_r[v]
          fprint(line)
     fprint()
 
@@ -622,14 +630,90 @@ def main():
     print('Created', 'schedule_{}_{}____{}.txt'.format(schedule_year,
                     schedule_month, timestamp))
 
-    # Create csv file
-    with open('schedule_{}_{}____{}.csv'.format(schedule_year,
+    # Creates csv file
+
+    # Schedule in calendar
+    with open('output/schedule_{}_{}____{}.csv'.format(schedule_year,
                     schedule_month, timestamp), 'a', encoding='UTF8') as f:
-        f.write("{} {}\n".format(schedule_year, month_name.lower()))
-        f.write("{},{},{},{}\n".format(l_Name, l_Phone, l_Chat, l_Observer))
+        f.write("{} {}\n".format(schedule_year, month_name))
+        for weekday in weekday_name_dic:
+            f.write(',' + weekday_name_dic[weekday])
+        f.write(',\n')
+        f.write(',\n')
+        first_shift = ',' * firstday
+        for i in week_indexes:
+            line_0 = ','
+            line_1 = ','
+            line_2 = ','
+            line_3 = ','
+            line_4 = ','
+            if first_shift:
+                line_0 += first_shift
+                line_1 += first_shift
+                line_2 += first_shift
+                line_3 += first_shift
+                line_4 += first_shift
+                first_shift = ''
+
+            for d in weeks[i]:
+                phone, chat, observer, extra = False, False, False, False
+                line_0 += str(d) + ','
+
+                # Phone
+                for v in volunteers:
+                    if solver.Value(schedule[(v, d, 0)]) == 1:
+                        phone = True
+                        break
+                if phone:
+                    line_1 += l_P + ': ' + vol_l[v] + ','
+                else:
+                    line_1 += l_P + ': -' + ','
+
+                # Chat
+                for v in volunteers:
+                    if solver.Value(schedule[(v, d, 1)]) == 1:
+                        chat = True
+                        break
+                if chat:
+                    line_2 += l_C + ': ' + vol_l[v] + ','
+                elif d in chat_days:
+                    line_2 += l_C + ': -' + ','
+                else:
+                    line_2 +=  ','
+
+                # Observer
+                for v in volunteers:
+                    if solver.Value(schedule[(v, d, 2)]) == 1:
+                        observer = True
+                        break
+                if observer:
+                    line_3 += l_O + ': ' + vol_l[v] + ','
+                else:
+                    line_3 +=  ','
+
+                # Extra
+                for v in volunteers:
+                    if solver.Value(schedule[(v, d, 3)]) == 1:
+                        extra = True
+                        break
+                if extra:
+                    line_4 += l_E + ': ' + vol_l[v] + ','
+                else:
+                    line_4 +=  ','
+            f.write(line_0 + '\n')
+            f.write(line_1 + '\n')
+            f.write(line_2 + '\n')
+            f.write(line_3 + '\n')
+            f.write(line_4 + '\n')
+            f.write(',\n')
+        f.write(',\n')
+
+    # Schedule by volunteer
+    with open('output/schedule_{}_{}____{}.csv'.format(schedule_year,
+                    schedule_month, timestamp), 'a', encoding='UTF8') as f:
+        f.write(",{},{},{},{}\n".format(l_Name, l_Phone, l_Chat, l_Observer))
         for v in volunteers:
-            line = ''
-            line = volunteer_dic[v] + ','
+            line = ',' + volunteer_dic[v] + ','
             for s in [0,1,2]:
                 try:
                     not_one = False
@@ -646,9 +730,11 @@ def main():
                     line += ','
 
             f.write(line + '\n')
+        f.write(',\n')
+        f.write(',\n')
+
         print('Created', 'schedule_{}_{}____{}.csv'.format(schedule_year,
                         schedule_month, timestamp))
-    print()
 
 
 if __name__ == '__main__':

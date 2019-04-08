@@ -1,10 +1,11 @@
-filename = 'data/data_HU.csv'
-encoding = 'UTF8'
-after_year = '.'
-month_name_dic = {1:'január', 2:'február', 3:'március', 4:'április',
+l_filename = 'data/data_HU.csv'
+l_output_filename = 'beosztas'
+l_encoding = 'UTF8'
+l_after_year = '.'
+l_month_name_dic = {1:'január', 2:'február', 3:'március', 4:'április',
     5:'május', 6:'június', 7:'július', 8:'augusztus', 9:'szeptember',
     10:'október', 11:'november', 12:'december'}
-weekday_name_dic = {1:'Hétfő', 2:'Kedd', 3:'Szerda', 4:'Csütörtök',
+l_weekday_name_dic = {1:'Hétfő', 2:'Kedd', 3:'Szerda', 4:'Csütörtök',
     5:'Péntek', 6:'Szombat', 7:'Vasárnap'}
 l_Name = 'Név'
 l_C = 'C'

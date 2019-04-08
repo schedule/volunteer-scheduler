@@ -22,13 +22,13 @@ else:
 def main():
     # Get data from csv file
     f = []
-    with open(filename, encoding='UTF8') as csvfile:
+    with open(l_filename, encoding='UTF8') as csvfile:
          reader = csv.reader(csvfile, delimiter=',')
          for row in reader:
              f.append(row)
     schedule_year = int(f[0][1])
     schedule_month = int(f[1][1])
-    month_name = month_name_dic[schedule_month]
+    month_name = l_month_name_dic[schedule_month]
     data_lines = []
     for line in range(5, len(f)):
         if f[line][3]:
@@ -110,6 +110,7 @@ def main():
 
     all_days_available = []
     all_workload = []
+    all_wants_alone = []
     all_cannot_alone = []
     all_not_with = []
 
@@ -126,104 +127,108 @@ def main():
 
     # Processing file data
     def use_data(id, type, days_available, workload,
-         max_weekend_days, welcomes_observer, separate_w, alone,
-         cannot_alone, not_with):
+        max_weekend_days, welcomes_observer, separate_w, alone,
+        cannot_alone, not_with):
 
-         all_days_available.append(days_available)
-         all_workload.append(workload)
+        all_days_available.append(days_available)
+        all_workload.append(workload)
 
-         # Volunteers doing only chat
-         if type == l_C:
-             for d in list_of_days:
-                 for s in [0,2,3]:
-                     model.Add(schedule[(id, d, s)] == False)
-                 if d in days_available:
-                     model.Add(schedule[(id, d, 1)] <= 1)
-                 else:
-                     model.Add(schedule[(id, d, 1)] == False)
+        # Volunteers doing only chat
+        if type == l_C:
+            for d in list_of_days:
+                for s in [0,2,3]:
+                    model.Add(schedule[(id, d, s)] == False)
+                if d in days_available:
+                    model.Add(schedule[(id, d, 1)] <= 1)
+                else:
+                    model.Add(schedule[(id, d, 1)] == False)
 
-         # Volunteers doing chat and phone
-         if type == l_CP:
-             for d in list_of_days:
-                 model.Add(schedule[(id, d, 2)] == False)
-                 if d in days_available:
-                     model.Add(sum(schedule[(id, d, s)]
-                             for s in [0,1,3]) <= 1)
-                 else:
-                     for s in [0,1,3]:
-                         model.Add(schedule[(id, d, s)] == False)
-
-         # Volunteers doing only phone
-         if type == l_P:
-             for d in list_of_days:
-                 for s in [1,2]:
-                     model.Add(schedule[(id, d, s)] == False)
-                 if d in days_available:
-                     model.Add(sum(schedule[(id, d, s)]
-                             for s in [0,3]) <= 1)
-                 else:
-                     for s in [0,3]:
-                         model.Add(schedule[(id, d, s)] == False)
-
-         # Volunteers doing observation
-         if type == l_O:
-             observers.append(id)
-             for d in list_of_days:
+        # Volunteers doing chat and phone
+        if type == l_CP:
+         for d in list_of_days:
+             model.Add(schedule[(id, d, 2)] == False)
+             if d in days_available:
+                 model.Add(sum(schedule[(id, d, s)]
+                         for s in [0,1,3]) <= 1)
+             else:
                  for s in [0,1,3]:
                      model.Add(schedule[(id, d, s)] == False)
-                 if d in days_available:
-                     model.Add(schedule[(id, d, 2)] <= 1)
-                 else:
-                     model.Add(schedule[(id, d, 2)] == False)
 
-         # List observers and volunteers welcoming observers
-         if type in [l_C, l_CP, l_P] and welcomes_observer:
-             welcomers.append(id)
+        # Volunteers doing only phone
+        if type == l_P:
+            for d in list_of_days:
+                for s in [1,2]:
+                    model.Add(schedule[(id, d, s)] == False)
+                if d in days_available:
+                    model.Add(sum(schedule[(id, d, s)]
+                         for s in [0,3]) <= 1)
+                else:
+                    for s in [0,3]:
+                        model.Add(schedule[(id, d, s)] == False)
 
-         # Total workload
-         model.Add(sum(schedule[(id, d, s)]
-             for d in days_available for s in shifts) <= workload)
+        # Volunteers doing observation
+        if type == l_O:
+            observers.append(id)
+            for d in list_of_days:
+                for s in [0,1,3]:
+                    model.Add(schedule[(id, d, s)] == False)
+            if d in days_available:
+                model.Add(schedule[(id, d, 2)] <= 1)
+            else:
+                model.Add(schedule[(id, d, 2)] == False)
 
-         # Max weekend days
-         max_weekend_days
-         days = [d for d in weekend_days if d in days_available]
-         model.Add(sum(schedule[(id, d, s)]
-             for d in days for s in shifts) <= max_weekend_days)
+        # List observers and volunteers welcoming observers
+        if type in [l_C, l_CP, l_P] and welcomes_observer:
+            welcomers.append(id)
 
-         # Wants shifts to be on different weeks
-         if separate_w:
-             for i in weeks:
-                 model.Add(sum(schedule[(id, d, s)]
-                     for s in shifts for d in weeks[i]
-                     if d in days_available) <= 1)
+        # Total workload
+        model.Add(sum(schedule[(id, d, s)]
+            for d in days_available for s in shifts) <= workload)
 
-         # Wants to work alone
-         if alone:
-             days = [d for d in days_available]
-             others = [i for i in volunteers if i != id]
-             for d in days:
-                 model.Add(sum(schedule[(v, d, s)] for v in others
-                     for s in shifts) + schedule[(id, d, s)] <= 1)
+        # Max weekend days
+        max_weekend_days
+        days = [d for d in weekend_days if d in days_available]
+        model.Add(sum(schedule[(id, d, s)]
+            for d in days for s in shifts) <= max_weekend_days)
 
-         # Cannot work alone
-         if cannot_alone:
-             cannot_work_alone.append(id)
+        # Wants shifts to be on different weeks
+        if separate_w:
+            for i in weeks:
+                model.Add(sum(schedule[(id, d, s)]
+            for s in shifts for d in weeks[i]
+                if d in days_available) <= 1)
 
-         # Does not want to work with XY
-         if not_with:
-             not_with_them.append([id, not_with])
+        # Wants to work alone
+        if alone:
+            all_wants_alone.append(id)
+            # days = [d for d in days_available]
+            # others = [i for i in volunteers if i != id]
+            # for d in days:
+            #     model.Add(sum(schedule[(v, d, s)] for v in others
+            #         for s in shifts) + schedule[(id, d, s)] <= 1)
+
+        # Cannot work alone
+        if cannot_alone:
+            all_cannot_alone.append(id)
+
+        # Does not want to work with XY
+        if not_with:
+            not_with_them.append([id, not_with])
 
     # volunteer_dic = {ID:name}, volunteer_dic_r = {name:ID}
     volunteer_dic = {}
     volunteer_dic_r = {}
     id = 0
     for line in data_lines:
-         volunteer_dic[id] = f[line][1]
-         volunteer_dic_r[f[line][1]] = id
-         id += 1
+        volunteer_dic[id] = f[line][1]
+        volunteer_dic_r[f[line][1]] = id
+        id += 1
 
     def bool_from_string(value):
-         bool(int(value))
+        if value == '1':
+            return True
+        else:
+            return False
 
     # Loads data
     id = 0
@@ -300,8 +305,8 @@ def main():
     for id in all_cannot_alone:
         days = [d for d in all_days_available[id]]
         others = [i for i in volunteers if i != id
-            and i not in cannot_work_alone]
-        other_not_alones = [i for i in cannot_work_alone if i != id]
+            and i not in all_cannot_alone]
+        other_not_alones = [i for i in all_cannot_alone if i != id]
         for d in days:
             # Only can work on a day when other volunteer works who
             # can work alone
@@ -327,11 +332,13 @@ def main():
     # OBJECTIVE
 
     # Filled phone shifts has the greatest priority
-    model.Maximize(sum(
-        4 * schedule[(v, d, 0)] + 3 * schedule[(v, d, 1)]
+    model.Maximize(sum(8 * schedule[(v, d, 0)] + 6 * schedule[(v, d, 1)]
         + schedule[(v, d, 2)] +
-        (schedule[(v, d, 3)] if d in chat_days else 2 * schedule[(v, d, 3)])
-        for d in list_of_days for v in volunteers))
+        (2 * schedule[(v, d, 3)] if d in chat_days else 4 * schedule[(v, d, 3)])
+         for d in list_of_days for v in volunteers)
+        -sum(3 * schedule[(wa, d, s)] and schedule[(v, d, 0)] and schedule[(v, d, 1)]
+        and schedule[(v, d, 2)] and schedule[(v, d, 3)]
+        for wa in all_wants_alone))
 
 
     # SOLUTION
@@ -372,14 +379,20 @@ def main():
     # Create txt file
     timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M')
     def fprint(*output):
-        if output:
-            w = output[0]
-            print(w)
-        else:
-            w = '\n'
-            print()
-        with open('output/schedule_{}_{}____{}.txt'.format(schedule_year,
-                        schedule_month, timestamp), 'a', encoding='UTF8') as f:
+        try:
+            a, b = output
+            w = a + b
+            print(w, end='')
+        except:
+            try:
+                w = output[0]
+                print(w)
+            except:
+                w = '\n'
+                print()
+        with open('output/{}_{}_{}____{}.txt'.format(l_output_filename,
+            schedule_year,
+                schedule_month, timestamp), 'a', encoding='UTF8') as f:
             f.write("{}\n".format(w))
 
     vol_l = {}
@@ -389,8 +402,8 @@ def main():
     for v in volunteers:
         width = 11
         if ord(volunteer_dic[v][0]) < 1000:
-             vol_l[v] = volunteer_dic[v].ljust(width)
-             vol_r[v] = volunteer_dic[v].rjust(width)
+            vol_l[v] = volunteer_dic[v].ljust(width)
+            vol_r[v] = volunteer_dic[v].rjust(width)
         else:
             length = len(volunteer_dic[v])
             if length in [1,2,3]:
@@ -399,98 +412,99 @@ def main():
                 shift = 3
             if length == 5:
                 shift = 1
-            vol_l[v] = volunteer_dic[v].encode(encoding).ljust(width).decode(encoding)
+            vol_l[v] = volunteer_dic[v].encode(l_encoding).ljust(width).decode(l_encoding)
             vol_l[v] +=  ' ' * shift
-            vol_r[v] = volunteer_dic[v].encode(encoding).rjust(width).decode(encoding)
+            vol_r[v] = volunteer_dic[v].encode(l_encoding).rjust(width).decode(l_encoding)
             vol_r[v] = ' ' * shift + vol_r[v]
 
     fprint()
     def horizontal_line():
-         fprint('_' * 108)
+        fprint('_' * 108)
 
     def write_l(name, width):
-         if ord(volunteer_dic[v][0]) < 1000:
-             return name.ljust(width)
-         else:
-             return name.encode(encoding).ljust(width).decode(encoding)
+        if ord(volunteer_dic[v][0]) < 1000:
+            return name.ljust(width)
+        else:
+            return name.encode(l_encoding).ljust(width).decode(l_encoding)
 
     def write_r(name, width):
-         if ord(volunteer_dic[v][0]) < 1000:
-             return name.rjust(width)
-         else:
-             return name.encode(encoding).rjust(width).decode(encoding)
+        if ord(volunteer_dic[v][0]) < 1000:
+            return name.rjust(width)
+        else:
+            return name.encode(l_encoding).rjust(width).decode(l_encoding)
 
     first_shift = ''
     fprint()
     fprint()
-    fprint(str(schedule_year) + after_year + ' ' + month_name)
+    fprint(str(schedule_year) + l_after_year + ' ' + month_name)
     first_shift = ' ' * 16 * firstday
 
     for i in week_indexes:
-         horizontal_line()
-         line_0 = ''
-         line_1 = ''
-         line_2 = ''
-         line_3 = ''
-         line_4 = ''
-         if first_shift:
-             line_0 += first_shift
-             line_1 += first_shift
-             line_2 += first_shift
-             line_3 += first_shift
-             line_4 += first_shift
-             first_shift = 0
+        horizontal_line()
+        line_0 = ''
+        line_1 = ''
+        line_2 = ''
+        line_3 = ''
+        line_4 = ''
+        if first_shift:
+            line_0 += first_shift
+            line_1 += first_shift
+            line_2 += first_shift
+            line_3 += first_shift
+            line_4 += first_shift
+            first_shift = 0
 
-         for d in weeks[i]:
-             phone, chat, observer, extra = False, False, False, False
-             line_0 += '{:<2}'.format(d) + ' ' * 14
+        for d in weeks[i]:
+            phone, chat, observer, extra = False, False, False, False
+            line_0 += '{:<2}'.format(d) + ' ' * 14
 
-             # Phone
-             for v in volunteers:
-                 if solver.Value(schedule[(v, d, 0)]) == 1:
-                     phone = True
-                     break
-             if phone:
-                 line_1 += l_P + ': ' + vol_l[v] + ' ' * 2
-             else:
-                 line_1 += l_P + ': -' + ' ' * 12
+            # Phone
+            for v in volunteers:
+                if solver.Value(schedule[(v, d, 0)]) == 1:
+                    phone = True
+                    break
+            if phone:
+                line_1 += l_P + ': ' + vol_l[v] + ' ' * 2
+            else:
+                line_1 += l_P + ': -' + ' ' * 12
 
-             # Chat
-             for v in volunteers:
-                 if solver.Value(schedule[(v, d, 1)]) == 1:
-                     chat = True
-                     break
-             if chat:
-                 line_2 += l_C + ': ' + vol_l[v] + ' ' * 2
-             elif d in chat_days:
-                 line_2 += l_C + ': -' + ' ' * 12
-             else:
-                 line_2 += ' ' * 16
+            # Extra
+            for v in volunteers:
+                if solver.Value(schedule[(v, d, 3)]) == 1:
+                    extra = True
+                    break
+            if extra:
+                line_2 += l_E + ': ' + vol_l[v] + ' ' * 2
+            else:
+                line_2 += ' ' * 16
 
-             # Observer
-             for v in volunteers:
-                 if solver.Value(schedule[(v, d, 2)]) == 1:
-                     observer = True
-                     break
-             if observer:
-                 line_3 += l_O + ': ' + vol_l[v] + ' ' * 2
-             else:
-                 line_3 += ' ' * 16
+            # Chat
+            for v in volunteers:
+                if solver.Value(schedule[(v, d, 1)]) == 1:
+                    chat = True
+                    break
+            if chat:
+                line_3 += l_C + ': ' + vol_l[v] + ' ' * 2
+            elif d in chat_days:
+                line_3 += l_C + ': -' + ' ' * 12
+            else:
+                line_3 += ' ' * 16
 
-             # Extra
-             for v in volunteers:
-                 if solver.Value(schedule[(v, d, 3)]) == 1:
-                     extra = True
-                     break
-             if extra:
-                 line_4 += l_E + ': ' + vol_l[v] + ' ' * 2
-             else:
-                 line_4 += ' ' * 16
-         fprint(line_0)
-         fprint(line_1)
-         fprint(line_2)
-         fprint(line_3)
-         fprint(line_4)
+            # Observer
+            for v in volunteers:
+                if solver.Value(schedule[(v, d, 2)]) == 1:
+                    observer = True
+                    break
+            if observer:
+                line_4 += l_O + ': ' + vol_l[v] + ' ' * 2
+            else:
+                line_4 += ' ' * 16
+
+        fprint(line_0)
+        fprint(line_1)
+        fprint(line_2)
+        fprint(line_3)
+        fprint(line_4)
     horizontal_line()
     fprint()
     fprint()
@@ -507,7 +521,7 @@ def main():
 
     for d in list_of_days:
          line = ''
-         phone, chat, observer, plus = False, False, False, False
+         phone, chat, observer, extra = False, False, False, False
          line += '{:>8}.|'.format(d)
 
          # Phone
@@ -523,9 +537,9 @@ def main():
          # Extra
          for v in volunteers:
              if solver.Value(schedule[(v, d, 3)]) == 1:
-                 plus = True
+                 extra = True
                  break
-         if plus:
+         if extra:
              line += vol_r[v]
          else:
              line += write_r(' ' * 11, 11)
@@ -627,17 +641,18 @@ def main():
          fprint()
          fprint()
 
-    print('Created', 'schedule_{}_{}____{}.txt'.format(schedule_year,
-                    schedule_month, timestamp))
+    print('Created', '{}_{}_{}____{}.txt'.format(l_output_filename,
+        schedule_year, schedule_month, timestamp))
 
     # Creates csv file
 
     # Schedule in calendar
-    with open('output/schedule_{}_{}____{}.csv'.format(schedule_year,
-                    schedule_month, timestamp), 'a', encoding='UTF8') as f:
+    with open('output/{}_{}_{}____{}.csv'.format(l_output_filename,
+        schedule_year,
+            schedule_month, timestamp), 'a', encoding='UTF8') as f:
         f.write("{} {}\n".format(schedule_year, month_name))
-        for weekday in weekday_name_dic:
-            f.write(',' + weekday_name_dic[weekday])
+        for weekday in l_weekday_name_dic:
+            f.write(',' + l_weekday_name_dic[weekday])
         f.write(',\n')
         f.write(',\n')
         first_shift = ',' * firstday
@@ -669,17 +684,27 @@ def main():
                 else:
                     line_1 += l_P + ': -' + ','
 
+                # Extra
+                for v in volunteers:
+                    if solver.Value(schedule[(v, d, 3)]) == 1:
+                        extra = True
+                        break
+                if extra:
+                    line_2 += l_E + ': ' + vol_l[v] + ','
+                else:
+                    line_2 +=  ','
+
                 # Chat
                 for v in volunteers:
                     if solver.Value(schedule[(v, d, 1)]) == 1:
                         chat = True
                         break
                 if chat:
-                    line_2 += l_C + ': ' + vol_l[v] + ','
+                    line_3 += l_C + ': ' + vol_l[v] + ','
                 elif d in chat_days:
-                    line_2 += l_C + ': -' + ','
+                    line_3 += l_C + ': -' + ','
                 else:
-                    line_2 +=  ','
+                    line_3 +=  ','
 
                 # Observer
                 for v in volunteers:
@@ -687,19 +712,10 @@ def main():
                         observer = True
                         break
                 if observer:
-                    line_3 += l_O + ': ' + vol_l[v] + ','
-                else:
-                    line_3 +=  ','
-
-                # Extra
-                for v in volunteers:
-                    if solver.Value(schedule[(v, d, 3)]) == 1:
-                        extra = True
-                        break
-                if extra:
-                    line_4 += l_E + ': ' + vol_l[v] + ','
+                    line_4 += l_O + ': ' + vol_l[v] + ','
                 else:
                     line_4 +=  ','
+
             f.write(line_0 + '\n')
             f.write(line_1 + '\n')
             f.write(line_2 + '\n')
@@ -709,8 +725,9 @@ def main():
         f.write(',\n')
 
     # Schedule by volunteer
-    with open('output/schedule_{}_{}____{}.csv'.format(schedule_year,
-                    schedule_month, timestamp), 'a', encoding='UTF8') as f:
+    with open('output/{}_{}_{}____{}.csv'.format(l_output_filename,
+        schedule_year,
+            schedule_month, timestamp), 'a', encoding='UTF8') as f:
         f.write(",{},{},{},{}\n".format(l_Name, l_Phone, l_Chat, l_Observer))
         for v in volunteers:
             line = ',' + volunteer_dic[v] + ','
@@ -733,8 +750,8 @@ def main():
         f.write(',\n')
         f.write(',\n')
 
-        print('Created', 'schedule_{}_{}____{}.csv'.format(schedule_year,
-                        schedule_month, timestamp))
+        print('Created', '{}_{}_{}____{}.csv'.format(l_output_filename,
+            schedule_year, schedule_month, timestamp))
 
 
 if __name__ == '__main__':

@@ -1,4 +1,4 @@
-# https://github.com/imreszakal/helpline_scheduler
+# https://github.com/imreszakal/volunteer-scheduler
 
 from ortools.sat.python import cp_model
 import csv
@@ -172,10 +172,10 @@ def main():
             for d in list_of_days:
                 for s in [0,1,3]:
                     model.Add(schedule[(id, d, s)] == False)
-            if d in days_available:
-                model.Add(schedule[(id, d, 2)] <= 1)
-            else:
-                model.Add(schedule[(id, d, 2)] == False)
+                if d in days_available:
+                    model.Add(schedule[(id, d, 2)] <= 1)
+                else:
+                    model.Add(schedule[(id, d, 2)] == False)
 
         # List observers and volunteers welcoming observers
         if type in [l_C, l_CP, l_P] and welcomes_observer:
@@ -184,6 +184,7 @@ def main():
         # Total workload
         model.Add(sum(schedule[(id, d, s)]
             for d in days_available for s in shifts) <= workload)
+
 
         # Max weekend days
         max_weekend_days
@@ -201,11 +202,6 @@ def main():
         # Wants to work alone
         if alone:
             all_wants_alone.append(id)
-            # days = [d for d in days_available]
-            # others = [i for i in volunteers if i != id]
-            # for d in days:
-            #     model.Add(sum(schedule[(v, d, s)] for v in others
-            #         for s in shifts) + schedule[(id, d, s)] <= 1)
 
         # Cannot work alone
         if cannot_alone:
@@ -380,16 +376,11 @@ def main():
     timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M')
     def fprint(*output):
         try:
-            a, b = output
-            w = a + b
-            print(w, end='')
+            w = output[0]
+            print(w)
         except:
-            try:
-                w = output[0]
-                print(w)
-            except:
-                w = '\n'
-                print()
+            w = '\n'
+            print()
         with open('output/{}_{}_{}____{}.txt'.format(l_output_filename,
             schedule_year,
                 schedule_month, timestamp), 'a', encoding='UTF8') as f:
@@ -605,30 +596,33 @@ def main():
     fprint(l_workloads + ': ')
     nonzero_capacity = False
     for v in volunteers:
-         works = 0
-         more = 0
-         workload = all_workload[v]
-         for d in list_of_days:
-             for s in shifts:
-                 if solver.Value(schedule[(v, d, s)]) == 1:
-                     works += 1
-         more = workload - works
-         if more > 0 or more < 0:
-             name = volunteer_dic[v]
-             nonzero_capacity = True
-             fprint('    {:>10} '.format(name), end='')
-             if l_works_a:
-                 fprint(l_works_a + ' ', end='')
-             fprint(str(works), l_day_maybe_plural(works), end='')
-             if l_works_b:
-                 fprint(' ' + l_works_b, end='')
-             fprint(', ', end='')
-             if l_but_offered_a:
-                 fprint(l_but_offered_a + ' ', end='')
-             fprint(workload, l_day_maybe_plural(workload), end='')
-             if l_but_offered_b:
-                 fprint(' ' + l_but_offered_b, end='')
-             fprint('.')
+        line = ''
+        works = 0
+        more = 0
+        workload = all_workload[v]
+        for d in list_of_days:
+            for s in shifts:
+                if solver.Value(schedule[(v, d, s)]) == 1:
+                    works += 1
+        more = workload - works
+        if more > 0 or more < 0:
+            name = volunteer_dic[v]
+            nonzero_capacity = True
+            line += '    {:>10} '.format(name)
+            if l_works_a:
+                line += l_works_a + ' '
+            line += str(works) + ' ' + l_day_maybe_plural(works)
+            if l_works_b:
+                line += ' ' + l_works_b
+            line += ', '
+            if l_but_offered_a:
+                line += l_but_offered_a + ' '
+            line += str(workload) + ' ' + l_day_maybe_plural(workload)
+            if l_but_offered_b:
+                line += ' ' + l_but_offered_b
+            line += '.'
+            fprint(line)
+            fprint()
     if not nonzero_capacity:
          fprint(l_capacity + '.')
     fprint()

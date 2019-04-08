@@ -3,6 +3,8 @@
 *.pyc
 *.txt
 schedule*.csv
+beosztas*.csv
+时间表*.csv
 dist
 build
 helpline_scheduler.egg-info

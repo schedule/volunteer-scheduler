@@ -1,2 +1,6 @@
 
 .DS_Store
+*.pyc
+dist
+build
+helpline_scheduler.egg-info

@@ -43,6 +43,7 @@ Requires 64-bit Python 3.7
 
 ## Usage
 1. Select your language in config.py: EN/HU/CN
+   
    Alternatively you can create your XX language extension by creating the corresponding data_XX.csv and language_XX.py files.
 2. Export corresponding data/data_XX.csv file into a spreadsheet, fill in your data, then export back into this file.
 3. Execute the program from its directory:

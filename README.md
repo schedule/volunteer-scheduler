@@ -39,7 +39,7 @@ Each volunteer has to have 4 days between their shifts.
 
 Requires 64-bit Python 3.7
 
-<code>pip3 install helpline-scheduler</code>
+<code>pip install helpline-scheduler</code>
 
 ## Usage
 1. Select your language in config.py: EN/HU/CN
@@ -48,7 +48,7 @@ Requires 64-bit Python 3.7
 2. Export corresponding data/data_XX.csv file into a spreadsheet, fill in your data, then export back into this file.
 3. Execute the program from its directory:
 
-<code>python3 schedule.py</code>
+<code>python schedule.py</code>
 
 ## Output
 

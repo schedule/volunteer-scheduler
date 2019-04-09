@@ -33,5 +33,7 @@ def l_day_maybe_plural(day):
         return 'napot'
 l_but_offered_a = 'de'
 l_but_offered_b = 'ajánlott fel'
+l_created = 'Új fájl:'
 l_message_1 = '"Köszönöm, hogy rendelkezésre álltok a hozzátok fordulóknak."'
 l_message_2 = ' - A beosztást elkészítő szoftver írója (imreszakal.com)'
+l_review = 'Itt értékelheted a szoftvert:'

@@ -13,11 +13,11 @@ l_CP = 'CP'
 l_P = 'P'
 l_O = 'O'
 l_E = 'E'
-l_Day = '日'.encode(encoding).rjust(9).decode(encoding)
-l_Phone = '电话'.encode(encoding).rjust(11).decode(encoding)
-l_Chat = '网聊'.encode(encoding).rjust(10).decode(encoding)
-l_Observer = '观察'.encode(encoding).rjust(10).decode(encoding)
-l_Extra = '额外'.encode(encoding).rjust(10).decode(encoding)
+l_Day = '日'.encode(l_encoding).rjust(9).decode(l_encoding)
+l_Phone = '电话'.encode(l_encoding).rjust(11).decode(l_encoding)
+l_Chat = '网聊'.encode(l_encoding).rjust(11).decode(l_encoding)
+l_Observer = '观察'.encode(l_encoding).rjust(11).decode(l_encoding)
+l_Extra = '额外'.encode(l_encoding).rjust(11).decode(l_encoding)
 l_phone = '电话'
 l_chat = '网聊'
 l_observer = '观察'
@@ -33,5 +33,7 @@ def l_day_maybe_plural(day):
         return '天'
 l_but_offered_a = '但想工作'
 l_but_offered_b = ''
+l_created = '新文件：'
 l_message_1 = ''
 l_message_2 = ''
+l_review = '您在这里可以评价本软件：'

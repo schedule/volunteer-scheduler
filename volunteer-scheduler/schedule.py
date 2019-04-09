@@ -504,10 +504,10 @@ def main():
 
     # fprint(str(schedule_year) + ' ' + month_name)
     if ord(l_Day[-1]) < 1000:
-         fprint('{:>9}|{:>11}{:>11}{:>11}{:>11}'.format(l_Day,
+        fprint('{:>9}|{:>11}{:>11}{:>11}{:>11}'.format(l_Day,
                                  l_Phone, l_Extra, l_Chat, l_Observer))
     else:
-         fprint(l_Day + '|' + l_Phone, l_Extra, l_Chat, l_Observer)
+        fprint(l_Day + '|' + l_Phone + l_Extra + l_Chat + l_Observer)
     fprint('_' * 9 + '|' + '_' * 48)
 
     for d in list_of_days:
@@ -584,14 +584,6 @@ def main():
              fprint()
     fprint()
 
-    # for v in volunteers:
-    #     for s in shifts:
-    #         try:
-    #             print(v, s, solution[(v, s)])
-    #         except:
-    #             pass
-
-
     # Who works less than willing?
     fprint(l_workloads + ': ')
     nonzero_capacity = False
@@ -627,16 +619,6 @@ def main():
          fprint(l_capacity + '.')
     fprint()
 
-    if l_message_1:
-         fprint()
-         fprint()
-         fprint(l_message_1)
-         fprint(l_message_2)
-         fprint()
-         fprint()
-
-    print('Created', '{}_{}_{}____{}.txt'.format(l_output_filename,
-        schedule_year, schedule_month, timestamp))
 
     # Creates csv file
 
@@ -744,9 +726,21 @@ def main():
         f.write(',\n')
         f.write(',\n')
 
-        print('Created', '{}_{}_{}____{}.csv'.format(l_output_filename,
-            schedule_year, schedule_month, timestamp))
+    print(l_created, '{}_{}_{}____{}.txt'.format(l_output_filename,
+        schedule_year, schedule_month, timestamp))
+    print(l_created, '{}_{}_{}____{}.csv'.format(l_output_filename,
+        schedule_year, schedule_month, timestamp))
 
+    fprint()
+    fprint()
+    fprint()
+    if l_message_1:
+         fprint(' ' * 10 + l_message_1)
+         fprint(' ' * 10 + l_message_2)
+         fprint()
+    fprint(' ' * 10 + l_review)
+    fprint(' ' * 10 + 'https://sourceforge.net/projects/volunteer-scheduler/reviews')
+    fprint()
 
 if __name__ == '__main__':
     main()

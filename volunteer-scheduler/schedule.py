@@ -738,9 +738,9 @@ def main():
          fprint(' ' * 10 + l_message_1)
          fprint(' ' * 10 + l_message_2)
          fprint()
-    fprint(' ' * 10 + l_review)
-    fprint(' ' * 10 + 'https://sourceforge.net/projects/volunteer-scheduler/reviews')
-    fprint()
+    # fprint(' ' * 10 + l_review)
+    # fprint(' ' * 10 + 'https://sourceforge.net/projects/volunteer-scheduler/reviews')
+    # fprint()
 
 if __name__ == '__main__':
     main()

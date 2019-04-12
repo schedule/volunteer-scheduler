@@ -20,10 +20,9 @@ else:
     print('You need to set language in config.py.')
 
 def main():
-    # Get data from csv file
     f = []
-    with open(l_filename, encoding='UTF8') as csvfile:
-         reader = csv.reader(csvfile, delimiter=',')
+    with open(l_filename, encoding='UTF8') as data_file:
+         reader = csv.reader(data_file, delimiter=',')
          for row in reader:
              f.append(row)
     schedule_year = int(f[0][1])
@@ -35,16 +34,11 @@ def main():
             data_lines.append(line)
 
     number_of_volunteers = len(data_lines)
-    # Volunteers ID list [0,1,2,3,...]
     volunteers = [i for i in range(number_of_volunteers)]
 
-    # Days in month; firstday 0 if monday
-    firstday, days_in_month = calendar.monthrange(schedule_year,
-                                                   schedule_month)
+    firstday, days_in_month = calendar.monthrange(schedule_year, schedule_month)
 
-    # Days' list [1,2,3,...]
     list_of_days = [i for i in range(1, days_in_month + 1)]
-    # First Monday of the month
 
     if firstday == 0:
         first_monday = 1
@@ -54,11 +48,9 @@ def main():
     # Chat days' list (Mondays and Wednesdays)
     chat_days = []
     m, w = first_monday, first_monday + 2
-    # Mondays
     while m <= days_in_month:
         chat_days.append(m)
         m += 7
-    # Wednesdays
     while w <= days_in_month:
         chat_days.append(w)
         w += 7
@@ -66,16 +58,13 @@ def main():
     # Weekend days (Saturdays and Sundays)
     weekend_days = []
     sat, sun = first_monday + 5, first_monday + 6
-    # Mondays
     while sat <= days_in_month:
         weekend_days.append(sat)
         sat += 7
-    # Wednesdays
     while sun <= days_in_month:
         weekend_days.append(sun)
         sun += 7
 
-    # weeks dictionary
     weeks = {}
     m = firstday
     week_index = 0
@@ -96,7 +85,6 @@ def main():
     # Remainder: shift 3
     shifts = [0,1,2,3]
 
-    # Creates the model.
     model = cp_model.CpModel()
 
     # Creates shift variables.
@@ -113,22 +101,15 @@ def main():
     all_wants_alone = []
     all_cannot_alone = []
     all_not_with = []
-
-    # List of volunteers welcoming observers and list of observers:
     welcomers = []
     observers = []
-
-    # List of volunteers who cannot work alone
     cannot_work_alone = []
-
-    # List of volunteer who does not want to work with some others
     not_with_them = []
 
 
-    # Processing file data
     def use_data(id, type, days_available, workload,
-        max_weekend_days, welcomes_observer, separate_w, alone,
-        cannot_alone, not_with):
+            max_weekend_days, welcomes_observer, separate_w, alone,
+            cannot_alone, not_with):
 
         all_days_available.append(days_available)
         all_workload.append(workload)
@@ -148,8 +129,7 @@ def main():
          for d in list_of_days:
              model.Add(schedule[(id, d, 2)] == False)
              if d in days_available:
-                 model.Add(sum(schedule[(id, d, s)]
-                         for s in [0,1,3]) <= 1)
+                 model.Add(sum(schedule[(id, d, s)] for s in [0,1,3]) <= 1)
              else:
                  for s in [0,1,3]:
                      model.Add(schedule[(id, d, s)] == False)
@@ -177,27 +157,26 @@ def main():
                 else:
                     model.Add(schedule[(id, d, 2)] == False)
 
-        # List observers and volunteers welcoming observers
-        if type in [l_C, l_CP, l_P] and welcomes_observer:
-            welcomers.append(id)
-
         # Total workload
         model.Add(sum(schedule[(id, d, s)]
-            for d in days_available for s in shifts) <= workload)
+                for d in days_available for s in shifts) <= workload)
 
 
         # Max weekend days
         max_weekend_days
         days = [d for d in weekend_days if d in days_available]
         model.Add(sum(schedule[(id, d, s)]
-            for d in days for s in shifts) <= max_weekend_days)
+                for d in days for s in shifts) <= max_weekend_days)
+
+        # List observers and volunteers welcoming observers
+        if type in [l_C, l_CP, l_P] and welcomes_observer:
+            welcomers.append(id)
 
         # Wants shifts to be on different weeks
         if separate_w:
             for i in weeks:
-                model.Add(sum(schedule[(id, d, s)]
-            for s in shifts for d in weeks[i]
-                if d in days_available) <= 1)
+                model.Add(sum(schedule[(id, d, s)] for s in shifts
+                        for d in weeks[i] if d in days_available) <= 1)
 
         # Wants to work alone
         if alone:
@@ -233,7 +212,7 @@ def main():
          type = values[2]
 
          days_available = [int(x) for x in values[3].split(',')
-             if x.strip().isdigit()]
+                if x.strip().isdigit()]
 
          workload = int(values[4])
          max_weekend_days = int(values[5])
@@ -244,15 +223,12 @@ def main():
          cannot_alone = bool_from_string(values[9])
 
          not_with = [volunteer_dic_r[name] for name in values[10].split(',')
-             if name]
+                if name]
 
-         use_data(id, type, days_available, workload,
-             max_weekend_days, welcomes_observer, separate_w, alone,
-             cannot_alone, not_with)
+         use_data(id, type, days_available, workload, max_weekend_days,
+                welcomes_observer, separate_w, alone, cannot_alone, not_with)
          id += 1
 
-
-    # Adding more constraints
 
     # Maximum one volunteer per shift.
     for d in list_of_days:
@@ -279,7 +255,7 @@ def main():
             while b > days_in_month:
                 b -= 1
             model.Add(sum(schedule[(v, d, s)]
-                for s in shifts for d in range(a, b)) <= 1)
+                    for s in shifts for d in range(a, b)) <= 1)
 
     # Observers only work with volunteers they are welcomed by
     for day in list_of_days:
@@ -290,30 +266,29 @@ def main():
             for v in volunteers:
                 # Only if welcomed by all other volunteers
                 if v in welcomers:
-                    model.Add(schedule[(o, d, 2)] <=
-                        sum(schedule[(v, d, s)] for s in [0,1,3]))
+                    model.Add(schedule[(o, d, 2)]
+                            <= sum(schedule[(v, d, s)] for s in [0,1,3]))
                 else:
                     for s in [0,1,3]:
-                        model.Add((schedule[(o, d, 2)] and
-                            schedule[(v, d, s)]) <= 1)
+                        model.Add((schedule[(o, d, 2)]
+                                and schedule[(v, d, s)]) <= 1)
 
     # Cannot work alone
     for id in all_cannot_alone:
         days = [d for d in all_days_available[id]]
         others = [i for i in volunteers if i != id
-            and i not in all_cannot_alone]
+                and i not in all_cannot_alone]
         other_not_alones = [i for i in all_cannot_alone if i != id]
         for d in days:
             # Only can work on a day when other volunteer works who
             # can work alone
-            model.Add(sum(schedule[(id, d, s)] for s in shifts) <=
-                sum(schedule[(v, d, s)]
-                for v in others for s in shifts))
+            model.Add(sum(schedule[(id, d, s)] for s in shifts)
+                    <= sum(schedule[(v, d, s)] for v in others for s in shifts))
             # Cannot work on the same day as other volunteer who
             # cannot work alone
-            model.Add(sum(schedule[(id, d, s)] for s in shifts) and
-                sum(schedule[(v, d, s)]
-                for v in other_not_alones for s in shifts) == False)
+            model.Add(sum(schedule[(id, d, s)] for s in shifts)
+                    and sum(schedule[(v, d, s)]
+                    for v in other_not_alones for s in shifts) == False)
 
     # Does not want to work with XY
     for not_want in not_with_them:
@@ -321,25 +296,26 @@ def main():
         days = [d for d in all_days_available[not_want[0]]]
         for d in days:
             model.Add(sum(schedule[(not_want[0], d, s)] for s in shifts)
-                and sum(schedule[(v, d, s)]
-                for v in them for s in shifts) == False)
+                    and sum(schedule[(v, d, s)]
+                    for v in them for s in shifts) == False)
 
 
     # OBJECTIVE
 
     # Filled phone shifts has the greatest priority
     model.Maximize(sum(8 * schedule[(v, d, 0)] + 6 * schedule[(v, d, 1)]
-        + schedule[(v, d, 2)] +
-        (2 * schedule[(v, d, 3)] if d in chat_days else 4 * schedule[(v, d, 3)])
-         for d in list_of_days for v in volunteers)
-        -sum(3 * schedule[(wa, d, s)] and schedule[(v, d, 0)] and schedule[(v, d, 1)]
-        and schedule[(v, d, 2)] and schedule[(v, d, 3)]
-        for wa in all_wants_alone))
+            + schedule[(v, d, 2)]
+            + (2 * schedule[(v, d, 3)] if d in chat_days
+                    else 4 * schedule[(v, d, 3)])
+                    for d in list_of_days for v in volunteers)
+            - sum(3 * schedule[(wa, d, s)] and schedule[(v, d, 0)]
+                    and schedule[(v, d, 1)] and schedule[(v, d, 2)]
+                    and schedule[(v, d, 3)]
+            for wa in all_wants_alone))
 
 
     # SOLUTION
 
-    # Creates the solver and solve.
     solver = cp_model.CpSolver()
     solver.Solve(model)
 
@@ -368,12 +344,14 @@ def main():
             pass
         solution[(v, 0)] = tel1 + tel2
 
-    # Create directories if it do not exist
     if not os.path.exists('output'):
         os.makedirs('output')
 
-    # Create txt file
     timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M')
+    new_filename = 'output/{}_{}_{}____{}'.format(l_output_filename,
+            schedule_year, schedule_month, timestamp)
+    txt_file = new_filename + '.txt'
+    csv_file = new_filename + '.csv'
     def fprint(*output):
         try:
             w = output[0]
@@ -381,9 +359,7 @@ def main():
         except:
             w = '\n'
             print()
-        with open('output/{}_{}_{}____{}.txt'.format(l_output_filename,
-            schedule_year,
-                schedule_month, timestamp), 'a', encoding='UTF8') as f:
+        with open(txt_file, 'a', encoding='UTF8') as f:
             f.write("{}\n".format(w))
 
     vol_l = {}
@@ -502,10 +478,9 @@ def main():
     fprint()
 
 
-    # fprint(str(schedule_year) + ' ' + month_name)
     if ord(l_Day[-1]) < 1000:
-        fprint('{:>9}|{:>11}{:>11}{:>11}{:>11}'.format(l_Day,
-                                 l_Phone, l_Extra, l_Chat, l_Observer))
+        fprint('{:>9}|{:>11}{:>11}{:>11}{:>11}'.format(l_Day, l_Phone, l_Extra,
+                l_Chat, l_Observer))
     else:
         fprint(l_Day + '|' + l_Phone + l_Extra + l_Chat + l_Observer)
     fprint('_' * 9 + '|' + '_' * 48)
@@ -620,12 +595,8 @@ def main():
     fprint()
 
 
-    # Creates csv file
-
     # Schedule in calendar
-    with open('output/{}_{}_{}____{}.csv'.format(l_output_filename,
-        schedule_year,
-            schedule_month, timestamp), 'a', encoding='UTF8') as f:
+    with open(csv_file, 'a', encoding='UTF8') as f:
         f.write("{} {}\n".format(schedule_year, month_name))
         for weekday in l_weekday_name_dic:
             f.write(',' + l_weekday_name_dic[weekday])
@@ -701,9 +672,7 @@ def main():
         f.write(',\n')
 
     # Schedule by volunteer
-    with open('output/{}_{}_{}____{}.csv'.format(l_output_filename,
-        schedule_year,
-            schedule_month, timestamp), 'a', encoding='UTF8') as f:
+    with open(csv_file, 'a', encoding='UTF8') as f:
         f.write(",{},{},{},{}\n".format(l_Name, l_Phone, l_Chat, l_Observer))
         for v in volunteers:
             line = ',' + volunteer_dic[v] + ','
@@ -726,10 +695,8 @@ def main():
         f.write(',\n')
         f.write(',\n')
 
-    print(l_created, '{}_{}_{}____{}.txt'.format(l_output_filename,
-        schedule_year, schedule_month, timestamp))
-    print(l_created, '{}_{}_{}____{}.csv'.format(l_output_filename,
-        schedule_year, schedule_month, timestamp))
+    print(l_created, txt_file)
+    print(l_created, csv_file)
 
     fprint()
     fprint()
@@ -739,7 +706,8 @@ def main():
          fprint(' ' * 10 + l_message_2)
          fprint()
     fprint(' ' * 10 + l_review)
-    fprint(' ' * 10 + 'https://sourceforge.net/projects/volunteer-scheduler/reviews')
+    fprint(' ' * 10
+            + 'https://sourceforge.net/projects/volunteer-scheduler/reviews')
     fprint()
 
 if __name__ == '__main__':

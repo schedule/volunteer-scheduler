@@ -3,10 +3,10 @@ l_output_filename = 'schedule'
 l_encoding = 'UTF8'
 l_after_year = ''
 l_month_name_dic = {1:'January', 2:'February', 3:'March', 4:'April',
-    5:'May', 6:'June', 7:'July', 8:'August', 9:'September',
-    10:'October', 11:'November', 12:'December'}
-l_weekday_name_dic = {1:'Monday', 2:'Tuesday', 3:'Wednesday', 4:'Thursday',
-    5:'Friday', 6:'Saturday', 7:'Sunday'}
+        5:'May', 6:'June', 7:'July', 8:'August', 9:'September',
+        10:'October', 11:'November', 12:'December'}
+l_weekday_name_list = {'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday',
+        'Saturday', 'Sunday'}
 l_Name = 'Name'
 l_C = 'C'
 l_CP = 'CP'

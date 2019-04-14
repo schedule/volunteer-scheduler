@@ -77,8 +77,6 @@ def main():
         week_index += 1
     week_count = len(weeks)
     week_indexes = [i + 1 for i in range(week_count)]
-
-
     week_count = len(weeks)
     week_indexes = [i + 1 for i in range(week_count)]
 
@@ -109,7 +107,6 @@ def main():
     observers = []
     cannot_work_alone = []
     not_with_them = []
-
 
     def use_data(id, type, days_available, workload,
             max_weekend_days, welcomes_observer, separate_w, alone,
@@ -164,7 +161,6 @@ def main():
         # Total workload
         model.Add(sum(schedule[(id, d, s)]
                 for d in days_available for s in shifts) <= workload)
-
 
         # Max weekend days
         max_weekend_days
@@ -233,7 +229,6 @@ def main():
                 welcomes_observer, separate_w, alone, cannot_alone, not_with)
          id += 1
 
-
     # Maximum one volunteer per shift.
     for d in list_of_days:
         # Phone shifts every day
@@ -264,9 +259,6 @@ def main():
     # Observers only work with volunteers they are welcomed by
     for day in list_of_days:
         for o in observers:
-            # # Only if phone shift is filled
-            # model.Add(schedule[(o, d, 2)] <=
-            #     sum(schedule[(v, d, 0)] for v in volunteers))
             for v in volunteers:
                 # Only if welcomed by all other volunteers
                 if v in welcomers:
@@ -379,18 +371,6 @@ def main():
         with open(txt_file, 'a', encoding='UTF8') as f:
             f.write(w + '\n')
 
-    def write_l(name, width):
-        if ord(volunteer_dic[v][0]) < 1000:
-            return name.ljust(width)
-        else:
-            return name.encode(l_encoding).ljust(width).decode(l_encoding)
-
-    def write_r(name, width):
-        if ord(volunteer_dic[v][0]) < 1000:
-            return name.rjust(width)
-        else:
-            return name.encode(l_encoding).rjust(width).decode(l_encoding)
-
     def csv_cell(cell_data):
         c = ''
         if cell_data:
@@ -415,139 +395,21 @@ def main():
         with open(csv_file, 'a', encoding='UTF8') as f:
             f.write(line + ',\n')
 
-    def calendar_solution_csv(d, l_X, shift, everyday, chatday):
-        line_item = ''
+    def calendar_solution(d, l_X, shift, everyday, chatday):
+        txt_item = ''
+        csv_item = ''
         try:
             v = solution_ds_v[(d, shift)]
-            line_item = l_X + ': ' + volunteer_dic[v]
+            csv_item = l_X + ': ' + volunteer_dic[v]
+            txt_item = l_X + ': ' + vol_l[v] + ' ' * 2
         except:
             if everyday or chatday and d in chat_days:
-                line_item = l_X + ': -'
+                txt_item = l_X + ': -' + ' ' * 12
+                csv_item = l_X + ': -'
             else:
-                line_item = ''
-        return line_item
-
-    def calendar_solution_txt(d, l_X, shift, everyday, chatday):
-        line_item = ''
-        try:
-            v = solution_ds_v[(d, shift)]
-            line_item = l_X + ': ' + vol_l[v] + ' ' * 2
-        except:
-            if everyday or chatday and d in chat_days:
-                line_item = l_X + ': -' + ' ' * 12
-            else:
-                line_item = ' ' * 16
-        return line_item
-
-
-    # Calendar
-
-    # TXT
-    vol_l = {}
-    vol_r = {}
-    length = 0
-    shift = 0
-    for v in volunteers:
-        width = 11
-        if ord(volunteer_dic[v][0]) < 1000:
-            vol_l[v] = volunteer_dic[v].ljust(width)
-            vol_r[v] = volunteer_dic[v].rjust(width)
-        else:
-            length = len(volunteer_dic[v])
-            if length in [1,2,3]:
-                shift = length
-            if length == 4:
-                shift = 3
-            if length == 5:
-                shift = 1
-            vol_l[v] = volunteer_dic[v].encode(l_encoding).ljust(width).decode(l_encoding)
-            vol_l[v] +=  ' ' * shift
-            vol_r[v] = volunteer_dic[v].encode(l_encoding).rjust(width).decode(l_encoding)
-            vol_r[v] = ' ' * shift + vol_r[v]
-
-    def horizontal_line():
-        print_txt('_' * 108)
-
-    lines = [list() for i in range(5)]
-    print_txt()
-    print_txt()
-    print_txt(str(schedule_year) + ' ' + month_name)
-    print_txt()
-    print_txt()
-
-    weekday_line = ''
-    for weekday in l_weekday_name_list:
-        weekday_line += '{:<16}'.format(weekday)
-    print_txt(weekday_line)
-
-    first_calendar_week_aligner = ' ' * 16 * firstday_index
-    for i in week_indexes:
-        horizontal_line()
-        for j in range(5):
-            lines[j] = ''
-        if first_calendar_week_aligner:
-            for k in range(5):
-                lines[k] = first_calendar_week_aligner
-            first_calendar_week_aligner = False
-
-        for d in weeks[i]:
-            lines[0] += '{:<16}'.format(d)
-            lines[1] += calendar_solution_txt(d, l_P, 0, True, False)
-            lines[2] += calendar_solution_txt(d, l_E, 3, False, False)
-            lines[3] += calendar_solution_txt(d, l_C, 1, False, True)
-            lines[4] += calendar_solution_txt(d, l_O, 2, False, False)
-
-        for line in lines:
-            print_txt(line)
-        print_txt()
-        print_txt()
-    horizontal_line()
-    print_txt()
-    print_txt()
-    print_txt()
-    print_txt()
-
-
-    # CSV
-    lines = [list() for i in range(5)]
-    print_csv([schedule_year, month_name])
-    print_csv([])
-
-    weekday_line = [weekday for weekday in l_weekday_name_list]
-    print_csv(weekday_line)
-
-    print_csv([])
-    first_calendar_week_aligner = ',' * firstday_index
-    for i in week_indexes:
-        for j in range(5):
-            lines[j] = ['']
-        if first_calendar_week_aligner:
-            for k in range(5):
-                lines[k].extend(['' for i in first_calendar_week_aligner])
-            first_calendar_week_aligner = False
-
-        for d in weeks[i]:
-            lines[0].append(d)
-            lines[1].append(calendar_solution_csv(d, l_P, 0, True, False))
-            lines[2].append(calendar_solution_csv(d, l_E, 3, False, False))
-            lines[3].append(calendar_solution_csv(d, l_C, 1, False, True))
-            lines[4].append(calendar_solution_csv(d, l_O, 2, False, False))
-
-        for line in lines:
-            print_csv(line)
-        print_csv([])
-    print_csv([])
-
-
-    # By day
-
-    # TXT only
-    if ord(l_Day[-1]) < 1000:
-        print_txt('{:>9}|{:>11}{:>11}{:>11}{:>11}'.format(l_Day, l_Phone, l_Extra,
-                l_Chat, l_Observer))
-    else:
-        print_txt(l_Day + '|' + l_Phone + l_Extra + l_Chat + l_Observer)
-    print_txt('_' * 9 + '|' + '_' * 48)
+                txt_item = ' ' * 16
+                csv_item = ''
+        return txt_item, csv_item
 
     def daily_txt_solution(day, shift, everyday, chatday):
         has = False
@@ -560,10 +422,117 @@ def main():
         if has:
             daily_shift_item += vol_r[v]
         elif everyday or chatday and day in chat_days:
-            daily_shift_item += write_r('      _    ', 11)
+            daily_shift_item += '      _    '
         else:
-            daily_shift_item += write_r(' ' * 11, 11)
+            daily_shift_item += ' ' * 11
         return daily_shift_item
+
+    vol_l = {}
+    vol_r = {}
+    for v in volunteers:
+        width = 11
+        if ord(volunteer_dic[v][0]) < 1000:
+            vol_l[v] = volunteer_dic[v].ljust(width)
+            vol_r[v] = volunteer_dic[v].rjust(width)
+        else:
+            length = len(volunteer_dic[v])
+            if length in [1,2,3]:
+                alignment_shift = length
+            if length == 4:
+                alignment_shift = 3
+            if length == 5:
+                alignment_shift = 1
+            e = l_encoding
+            vol_l[v] = volunteer_dic[v].encode(e).ljust(width).decode(e)
+            vol_l[v] +=  ' ' * alignment_shift
+            vol_r[v] = volunteer_dic[v].encode(e).rjust(width).decode(e)
+            vol_r[v] = ' ' * alignment_shift + vol_r[v]
+
+    def horizontal_line():
+        print_txt('_' * 108)
+
+
+    # Calendar
+    # TXT and CSV
+
+    print_txt()
+    print_txt()
+    print_txt(str(schedule_year) + ' ' + month_name)
+    print_txt()
+    print_txt()
+    print_csv([schedule_year, month_name])
+    print_csv([])
+
+    txt_weekday_line = ''
+    for weekday in l_weekday_name_list:
+        txt_weekday_line += '{:<16}'.format(weekday)
+    print_txt(txt_weekday_line)
+    csv_weekday_line = ['']
+    csv_weekday_line.extend([weekday for weekday in l_weekday_name_list])
+    print_csv(csv_weekday_line)
+
+    txt_first_calendar_week_aligner = ' ' * 16 * firstday_index
+    csv_first_calendar_week_aligner = ',' * firstday_index
+    txt_lines = [list() for i in range(5)]
+    csv_lines = [list() for i in range(5)]
+    for i in week_indexes:
+        horizontal_line()
+
+        for j in range(5):
+            txt_lines[j] = ''
+        for j in range(5):
+            csv_lines[j] = ['']
+
+        if txt_first_calendar_week_aligner:
+            for k in range(5):
+                txt_lines[k] = txt_first_calendar_week_aligner
+            txt_first_calendar_week_aligner = False
+        if csv_first_calendar_week_aligner:
+            for k in range(5):
+                csv_lines[k].extend(['' for i in csv_first_calendar_week_aligner])
+            csv_first_calendar_week_aligner = False
+
+        for d in weeks[i]:
+            txt_lines[0] += '{:<16}'.format(d)
+            csv_lines[0].append(d)
+            txt_item, csv_item = calendar_solution(d, l_P, 0, True, False)
+            txt_lines[1] += txt_item
+            csv_lines[1].append(csv_item)
+            txt_item, csv_item = calendar_solution(d, l_E, 3, False, False)
+            txt_lines[2] += txt_item
+            csv_lines[2].append(csv_item)
+            txt_item, csv_item = calendar_solution(d, l_C, 1, False, True)
+            txt_lines[3] += txt_item
+            csv_lines[3].append(csv_item)
+            txt_item, csv_item = calendar_solution(d, l_O, 2, False, False)
+            txt_lines[4] += txt_item
+            csv_lines[4].append(csv_item)
+
+        for line in txt_lines:
+            print_txt(line)
+        print_txt()
+        print_txt()
+
+        for line in csv_lines:
+            print_csv(line)
+        print_csv([])
+
+    horizontal_line()
+    print_txt()
+    print_txt()
+    print_txt()
+    print_txt()
+    print_csv([])
+
+
+    # By day
+    # TXT only
+    if ord(l_Day[-1]) < 1000:
+        print_txt('{:>9}|{:>11}{:>11}{:>11}{:>11}'.format(l_Day, l_Phone, l_Extra,
+                l_Chat, l_Observer))
+    else:
+        print_txt(l_Day + '|' + l_Phone + l_Extra + l_Chat + l_Observer)
+    print_txt('_' * 9 + '|' + '_' * 48)
 
     for d in list_of_days:
          line = ''
@@ -581,7 +550,6 @@ def main():
 
 
     # By volunteer
-
     # TXT
     shift_dic = {0:l_phone, 1:l_chat, 2:l_observer, 3:l_extra}
     for v in volunteers:
@@ -622,7 +590,6 @@ def main():
 
 
     # Capacities
-
     # TXT only
     print_txt(l_workloads + ': ')
     nonzero_capacity = False

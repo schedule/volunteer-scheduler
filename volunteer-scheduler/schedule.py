@@ -670,9 +670,11 @@ def main():
          print_txt(' ' * 10 + l_message_1)
          print_txt(' ' * 10 + l_message_2)
          print_txt()
-    # print_txt(' ' * 10 + l_review)
-    # print_txt(' ' * 10
-    #         + 'https://sourceforge.net/projects/volunteer-scheduler/reviews')
+    print_txt(' ' * 10 + l_review)
+    print_txt(' ' * 10
+            + 'https://sourceforge.net/projects/volunteer-scheduler/reviews')
+    print_txt()
+    print_txt('Copyright (c) 2019, Imre Szakal (imreszakal.com)')
     print_txt()
 
 if __name__ == '__main__':

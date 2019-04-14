@@ -36,14 +36,14 @@ def main():
     number_of_volunteers = len(data_lines)
     volunteers = [i for i in range(number_of_volunteers)]
 
-    firstday, days_in_month = calendar.monthrange(schedule_year, schedule_month)
+    firstday_index, days_in_month = calendar.monthrange(schedule_year, schedule_month)
 
     list_of_days = [i for i in range(1, days_in_month + 1)]
 
-    if firstday == 0:
+    if firstday_index == 0:
         first_monday = 1
     else:
-        first_monday = 8 - firstday
+        first_monday = 8 - firstday_index
 
     # Chat days' list (Mondays and Wednesdays)
     chat_days = []
@@ -66,7 +66,7 @@ def main():
         sun += 7
 
     weeks = {}
-    m = firstday
+    m = firstday_index
     week_index = 0
     d = 1
     while d <= days_in_month:
@@ -75,6 +75,10 @@ def main():
             weeks[week_index + 1].append(d)
             d += 1
         week_index += 1
+    week_count = len(weeks)
+    week_indexes = [i + 1 for i in range(week_count)]
+
+
     week_count = len(weeks)
     week_indexes = [i + 1 for i in range(week_count)]
 
@@ -319,35 +323,47 @@ def main():
     solver = cp_model.CpSolver()
     solver.Solve(model)
 
-    solution = {}
+    solution_vs_d = {}
     for s in shifts:
         for v in volunteers:
             has = False
             for d in list_of_days:
                 if solver.Value(schedule[(v, d, s)]) == 1:
                     if has:
-                        solution[(v, s)].append(d)
+                        solution_vs_d[(v, s)].append(d)
                     else:
-                        solution[(v, s)] = list()
-                        solution[(v, s)].append(d)
+                        solution_vs_d[(v, s)] = list()
+                        solution_vs_d[(v, s)].append(d)
                     has = True
+
+    solution_v_phone = {}
     for v in volunteers:
         tel1 = []
         tel2 = []
         try:
-            tel1 = solution[(v, 0)]
+            tel1 = solution_vs_d[(v, 0)]
         except:
             pass
         try:
-            tel2 = solution[(v, 3)]
+            tel2 = solution_vs_d[(v, 3)]
         except:
             pass
-        solution[(v, 0)] = tel1 + tel2
+        solution_v_phone[v] = tel1 + tel2
+
+    solution_ds_v = {}
+    for v in volunteers:
+        for s in shifts:
+            try:
+                days = solution_vs_d[(v, s)]
+                for day in days:
+                    solution_ds_v[(day, s)] = v
+            except:
+                pass
 
     if not os.path.exists('output'):
         os.makedirs('output')
 
-    timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M')
+    timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
     new_filename = 'output/{}_{}_{}____{}'.format(l_output_filename,
             schedule_year, schedule_month, timestamp)
     txt_file = new_filename + '.txt'
@@ -360,7 +376,9 @@ def main():
             w = '\n'
             print()
         with open(txt_file, 'a', encoding='UTF8') as f:
-            f.write("{}\n".format(w))
+            f.write(w + '\n')
+
+    # TXT
 
     vol_l = {}
     vol_r = {}
@@ -400,11 +418,11 @@ def main():
         else:
             return name.encode(l_encoding).rjust(width).decode(l_encoding)
 
-    first_shift = ''
+    first_calendar_week_aligner = ''
     fprint()
     fprint()
     fprint(str(schedule_year) + l_after_year + ' ' + month_name)
-    first_shift = ' ' * 16 * firstday
+    first_calendar_week_aligner = ' ' * 16 * firstday_index
 
     for i in week_indexes:
         horizontal_line()
@@ -413,13 +431,13 @@ def main():
         line_2 = ''
         line_3 = ''
         line_4 = ''
-        if first_shift:
-            line_0 += first_shift
-            line_1 += first_shift
-            line_2 += first_shift
-            line_3 += first_shift
-            line_4 += first_shift
-            first_shift = 0
+        if first_calendar_week_aligner:
+            line_0 += first_calendar_week_aligner
+            line_1 += first_calendar_week_aligner
+            line_2 += first_calendar_week_aligner
+            line_3 += first_calendar_week_aligner
+            line_4 += first_calendar_week_aligner
+            first_calendar_week_aligner = 0
 
         for d in weeks[i]:
             phone, chat, observer, extra = False, False, False, False
@@ -485,52 +503,34 @@ def main():
         fprint(l_Day + '|' + l_Phone + l_Extra + l_Chat + l_Observer)
     fprint('_' * 9 + '|' + '_' * 48)
 
+    def daily_txt_solution(v, d, l, shift, everyday, chatday):
+         has = False
+         ds = ''
+         for v in volunteers:
+             if solver.Value(schedule[(v, d, shift)]) == 1:
+                 has = True
+                 break
+         if has:
+             ds += vol_r[v]
+         elif everyday or chatday and d in chat_days:
+             ds += write_r('      _    ', 11)
+         else:
+             ds += write_r(' ' * 11, 11)
+         return ds
+
     for d in list_of_days:
          line = ''
          phone, chat, observer, extra = False, False, False, False
          line += '{:>8}.|'.format(d)
 
          # Phone
-         for v in volunteers:
-             if solver.Value(schedule[(v, d, 0)]) == 1:
-                 phone = True
-                 break
-         if phone:
-             line += vol_r[v]
-         else:
-             line += write_r('      _    ', 11)
-
+         line += daily_txt_solution(v, d, l_P, 0, True, False)
          # Extra
-         for v in volunteers:
-             if solver.Value(schedule[(v, d, 3)]) == 1:
-                 extra = True
-                 break
-         if extra:
-             line += vol_r[v]
-         else:
-             line += write_r(' ' * 11, 11)
-
+         line += daily_txt_solution(v, d, l_E, 3, False, False)
          # Chat
-         for v in volunteers:
-             if solver.Value(schedule[(v, d, 1)]) == 1:
-                 chat = True
-                 break
-         if chat:
-             line += vol_r[v]
-         elif d in chat_days:
-             line += write_r('      _    ', 11)
-         else:
-             line += write_r(' ' * 11, 11)
-
+         line += daily_txt_solution(v, d, l_C, 1, False, True)
          # Observer
-         for v in volunteers:
-             if solver.Value(schedule[(v, d, 2)]) == 1:
-                 observer = True
-                 break
-         if observer:
-             line += vol_r[v]
-         else:
-             line += write_r(' ' * 11, 11)
+         line += daily_txt_solution(v, d, l_O, 2, False, False)
 
          fprint(line)
     fprint()
@@ -594,106 +594,98 @@ def main():
          fprint(l_capacity + '.')
     fprint()
 
+    # CSV
 
-    # Schedule in calendar
-    with open(csv_file, 'a', encoding='UTF8') as f:
-        f.write("{} {}\n".format(schedule_year, month_name))
-        for weekday in l_weekday_name_dic:
-            f.write(',' + l_weekday_name_dic[weekday])
-        f.write(',\n')
-        f.write(',\n')
-        first_shift = ',' * firstday
-        for i in week_indexes:
-            line_0 = ','
-            line_1 = ','
-            line_2 = ','
-            line_3 = ','
-            line_4 = ','
-            if first_shift:
-                line_0 += first_shift
-                line_1 += first_shift
-                line_2 += first_shift
-                line_3 += first_shift
-                line_4 += first_shift
-                first_shift = ''
+    # Schedule in calendar new
+    def cell(cell_data):
+        c = ''
+        if cell_data:
+            try:
+                # number
+                if cell_data[0] > 0:
+                    if len(cell_data) > 1:
+                        c += '"' + str(cell_data[0])
+                        for j in cell_data[1:]:
+                            c += ',' + str(j)
+                        c += '"'
+                    else:
+                        c += str(cell_data[0])
+            except:
+                # string
+                c = str(cell_data)
+        return c
 
-            for d in weeks[i]:
-                phone, chat, observer, extra = False, False, False, False
-                line_0 += str(d) + ','
+    def cprint(list):
+        line = ''
+        line = ','.join(cell(i) for i in list)
+        with open(csv_file, 'a', encoding='UTF8') as f:
+            f.write(line + ',\n')
 
-                # Phone
-                for v in volunteers:
-                    if solver.Value(schedule[(v, d, 0)]) == 1:
-                        phone = True
-                        break
-                if phone:
-                    line_1 += l_P + ': ' + vol_l[v] + ','
-                else:
-                    line_1 += l_P + ': -' + ','
+    def calendar_solution(d, l_X, shift, everyday, chatday):
+        has = False
+        line_item = ''
+        try:
+            v = solution_ds_v[(d, shift)]
+            line_item = l_X + ': ' + volunteer_dic[v]
+        except:
+            if everyday or chatday and d in chat_days:
+                line_item = l_X + ': -'
+            else:
+                line_item = ''
+        return line_item
 
-                # Extra
-                for v in volunteers:
-                    if solver.Value(schedule[(v, d, 3)]) == 1:
-                        extra = True
-                        break
-                if extra:
-                    line_2 += l_E + ': ' + vol_l[v] + ','
-                else:
-                    line_2 +=  ','
+    # csv calendar new
+    lines = [list() for i in range(5)]
+    cprint([schedule_year, month_name])
+    cprint([])
 
-                # Chat
-                for v in volunteers:
-                    if solver.Value(schedule[(v, d, 1)]) == 1:
-                        chat = True
-                        break
-                if chat:
-                    line_3 += l_C + ': ' + vol_l[v] + ','
-                elif d in chat_days:
-                    line_3 += l_C + ': -' + ','
-                else:
-                    line_3 +=  ','
+    weekday_line = ['']
+    weekday_line.extend([l_weekday_name_dic[weekday]
+            for weekday in l_weekday_name_dic])
+    cprint(weekday_line)
 
-                # Observer
-                for v in volunteers:
-                    if solver.Value(schedule[(v, d, 2)]) == 1:
-                        observer = True
-                        break
-                if observer:
-                    line_4 += l_O + ': ' + vol_l[v] + ','
-                else:
-                    line_4 +=  ','
+    cprint([])
+    first_calendar_week_aligner = ',' * firstday_index
+    for i in week_indexes:
+        for j in range(5):
+            lines[j] = ['']
+        if first_calendar_week_aligner:
+            for k in range(5):
+                lines[k].extend(['' for i in first_calendar_week_aligner])
+            first_calendar_week_aligner = False
 
-            f.write(line_0 + '\n')
-            f.write(line_1 + '\n')
-            f.write(line_2 + '\n')
-            f.write(line_3 + '\n')
-            f.write(line_4 + '\n')
-            f.write(',\n')
-        f.write(',\n')
+        for d in weeks[i]:
+            # date
+            lines[0].append(d)
+            # Phone
+            lines[1].append(calendar_solution(d, l_P, 0, True, False))
+            # Extra
+            lines[2].append(calendar_solution(d, l_E, 3, False, False))
+            # Chat
+            lines[3].append(calendar_solution(d, l_C, 1, False, True))
+            # Observer
+            lines[4].append(calendar_solution(d, l_O, 2, False, False))
+
+        for line in lines:
+            cprint(line)
+        cprint([])
+    cprint([])
 
     # Schedule by volunteer
-    with open(csv_file, 'a', encoding='UTF8') as f:
-        f.write(",{},{},{},{}\n".format(l_Name, l_Phone, l_Chat, l_Observer))
-        for v in volunteers:
-            line = ',' + volunteer_dic[v] + ','
-            for s in [0,1,2]:
-                try:
-                    not_one = False
-                    item = solution[(v, s)]
-                    if len(item) > 1:
-                        not_one = True
-                        line += '"'
-                    line += ','.join(str(i) for i in item)
-                    if not_one:
-                        line += '"'
-                        not_one = False
-                    line += ','
-                except:
-                    line += ','
-
-            f.write(line + '\n')
-        f.write(',\n')
-        f.write(',\n')
+    cprint(['', l_Name, l_Phone, l_Chat, l_Observer])
+    for v in volunteers:
+        line = ['']
+        line.append(volunteer_dic[v])
+        try:
+            line.append(cell(solution_v_phone[v]))
+        except:
+            line.append('')
+        for s in [1,2]:
+            try:
+                line.append(cell(solution_vs_d[(v, s)]))
+            except:
+                line.append('')
+        cprint(line)
 
     print(l_created, txt_file)
     print(l_created, csv_file)
@@ -705,10 +697,10 @@ def main():
          fprint(' ' * 10 + l_message_1)
          fprint(' ' * 10 + l_message_2)
          fprint()
-    fprint(' ' * 10 + l_review)
-    fprint(' ' * 10
-            + 'https://sourceforge.net/projects/volunteer-scheduler/reviews')
-    fprint()
+    # fprint(' ' * 10 + l_review)
+    # fprint(' ' * 10
+    #         + 'https://sourceforge.net/projects/volunteer-scheduler/reviews')
+    # fprint()
 
 if __name__ == '__main__':
     main()

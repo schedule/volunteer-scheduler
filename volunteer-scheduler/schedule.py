@@ -513,9 +513,7 @@ def main():
     print_csv([schedule_year, month_name])
     print_csv([])
 
-    weekday_line = ['']
-    weekday_line.extend([l_weekday_name_dic[weekday]
-            for weekday in l_weekday_name_dic])
+    weekday_line = [weekday for weekday in l_weekday_name_list]
     print_csv(weekday_line)
 
     print_csv([])

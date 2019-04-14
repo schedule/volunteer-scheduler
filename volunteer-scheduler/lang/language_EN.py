@@ -5,8 +5,8 @@ l_after_year = ''
 l_month_name_dic = {1:'January', 2:'February', 3:'March', 4:'April',
         5:'May', 6:'June', 7:'July', 8:'August', 9:'September',
         10:'October', 11:'November', 12:'December'}
-l_weekday_name_list = {'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday',
-        'Saturday', 'Sunday'}
+l_weekday_name_list = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday',
+        'Saturday', 'Sunday']
 l_Name = 'Name'
 l_C = 'C'
 l_CP = 'CP'
@@ -36,4 +36,3 @@ l_but_offered_b = ''
 l_created = 'New file:'
 l_message_1 = ''
 l_message_2 = ''
-l_review = 'You can rate this software here:'

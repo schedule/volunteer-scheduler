@@ -386,17 +386,18 @@ def main():
     def calendar_solution(d, l_X, shift, everyday, chatday):
         txt_item = ''
         csv_item = ''
+        title = l_X + ': '
         try:
             v = solution_ds_v[(d, shift)]
-            csv_item = l_X + ': ' + volunteer_dic[v]
-            txt_item = l_X + ': ' + vol_l[v] + ' ' * 2
+            txt_item = title + vol_l[v] + ' ' * 2
+            csv_item = title + volunteer_dic[v]
         except:
             if everyday or chatday and d in chat_days:
-                txt_item = l_X + ': -' + ' ' * 12
-                csv_item = l_X + ': -'
+                csv_item = title + '-'
+                txt_item = title + '-' + ' ' * 12
             else:
-                txt_item = ' ' * 16
                 csv_item = ''
+                txt_item = ' ' * 16
         return txt_item, csv_item
 
     def daily_txt_solution(day, shift, everyday, chatday):
@@ -483,15 +484,19 @@ def main():
         for d in weeks[i]:
             txt_lines[0] += '{:<16}'.format(d)
             csv_lines[0].append(d)
+
             txt_item, csv_item = calendar_solution(d, l_P, 0, True, False)
             txt_lines[1] += txt_item
             csv_lines[1].append(csv_item)
+
             txt_item, csv_item = calendar_solution(d, l_E, 3, False, False)
             txt_lines[2] += txt_item
             csv_lines[2].append(csv_item)
+
             txt_item, csv_item = calendar_solution(d, l_C, 1, False, True)
             txt_lines[3] += txt_item
             csv_lines[3].append(csv_item)
+            
             txt_item, csv_item = calendar_solution(d, l_O, 2, False, False)
             txt_lines[4] += txt_item
             csv_lines[4].append(csv_item)

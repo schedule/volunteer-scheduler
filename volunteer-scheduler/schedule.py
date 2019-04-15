@@ -460,8 +460,8 @@ def main():
     csv_weekday_line.extend([weekday for weekday in l_weekday_name_list])
     print_csv(csv_weekday_line)
 
-    txt_first_calendar_week_aligner = ' ' * 16 * firstday_index
-    csv_first_calendar_week_aligner = ',' * firstday_index
+    txt_1st_calendar_w_aligner = ' ' * 16 * firstday_index
+    csv_1st_calendar_w_aligner = ',' * firstday_index
     txt_lines = [list() for i in range(5)]
     csv_lines = [list() for i in range(5)]
     for i in weeks:
@@ -472,14 +472,14 @@ def main():
         for j in range(5):
             csv_lines[j] = ['']
 
-        if txt_first_calendar_week_aligner:
+        if txt_1st_calendar_w_aligner:
             for k in range(5):
-                txt_lines[k] = txt_first_calendar_week_aligner
-            txt_first_calendar_week_aligner = False
-        if csv_first_calendar_week_aligner:
+                txt_lines[k] = txt_1st_calendar_w_aligner
+            txt_1st_calendar_w_aligner = False
+        if csv_1st_calendar_w_aligner:
             for k in range(5):
-                csv_lines[k].extend(['' for i in csv_first_calendar_week_aligner])
-            csv_first_calendar_week_aligner = False
+                csv_lines[k].extend(['' for i in csv_1st_calendar_w_aligner])
+            csv_1st_calendar_w_aligner = False
 
         for d in weeks[i]:
             txt_lines[0] += '{:<16}'.format(d)
@@ -496,7 +496,7 @@ def main():
             txt_item, csv_item = calendar_solution(d, l_C, 1, False, True)
             txt_lines[3] += txt_item
             csv_lines[3].append(csv_item)
-            
+
             txt_item, csv_item = calendar_solution(d, l_O, 2, False, False)
             txt_lines[4] += txt_item
             csv_lines[4].append(csv_item)
@@ -521,8 +521,8 @@ def main():
     # By day
     # TXT only
     if ord(l_Day[-1]) < 1000:
-        print_txt('{:>9}|{:>11}{:>11}{:>11}{:>11}'.format(l_Day, l_Phone, l_Extra,
-                l_Chat, l_Observer))
+        print_txt('{:>9}|{:>11}{:>11}{:>11}{:>11}'.format(l_Day, l_Phone,
+                l_Extra, l_Chat, l_Observer))
     else:
         print_txt(l_Day + '|' + l_Phone + l_Extra + l_Chat + l_Observer)
     print_txt('_' * 9 + '|' + '_' * 48)

@@ -1,12 +1,11 @@
 # https://github.com/imreszakal/volunteer-scheduler
 
 from ortools.sat.python import cp_model
-import csv
 import calendar
+import csv
 import sys
 import os
 import datetime
-from lxml import etree as e
 import config
 
 language = config.language
@@ -36,7 +35,8 @@ def main():
     number_of_volunteers = len(data_lines)
     volunteers = [i for i in range(number_of_volunteers)]
 
-    firstday_index, days_in_month = calendar.monthrange(schedule_year, schedule_month)
+    firstday_index, days_in_month = calendar.monthrange(schedule_year,
+            schedule_month)
 
     list_of_days = [i for i in range(1, days_in_month + 1)]
 
@@ -45,40 +45,28 @@ def main():
     else:
         first_monday = 8 - firstday_index
 
-    # Chat days' list (Mondays and Wednesdays)
-    chat_days = []
-    m, w = first_monday, first_monday + 2
-    while m <= days_in_month:
-        chat_days.append(m)
-        m += 7
-    while w <= days_in_month:
-        chat_days.append(w)
-        w += 7
+    def certain_weekdays_in_month(weekday_codes): # Monday: 0
+        days = []
+        for c in weekday_codes:
+            d = first_monday + c
+            while d <= days_in_month:
+                days.append(d)
+                d += 7
+        return days
 
-    # Weekend days (Saturdays and Sundays)
-    weekend_days = []
-    sat, sun = first_monday + 5, first_monday + 6
-    while sat <= days_in_month:
-        weekend_days.append(sat)
-        sat += 7
-    while sun <= days_in_month:
-        weekend_days.append(sun)
-        sun += 7
+    chat_days = certain_weekdays_in_month([0, 2])
+    weekend_days = certain_weekdays_in_month([5, 6])
 
     weeks = {}
     m = firstday_index
     week_index = 0
     d = 1
     while d <= days_in_month:
-        weeks[week_index + 1] = list()
+        weeks[week_index] = list()
         while d + m - week_index * 7 < 8 and d <= days_in_month:
-            weeks[week_index + 1].append(d)
+            weeks[week_index].append(d)
             d += 1
         week_index += 1
-    week_count = len(weeks)
-    week_indexes = [i + 1 for i in range(week_count)]
-    week_count = len(weeks)
-    week_indexes = [i + 1 for i in range(week_count)]
 
     # Distance between workdays per person
     distance = 2
@@ -475,7 +463,7 @@ def main():
     csv_first_calendar_week_aligner = ',' * firstday_index
     txt_lines = [list() for i in range(5)]
     csv_lines = [list() for i in range(5)]
-    for i in week_indexes:
+    for i in weeks:
         horizontal_line()
 
         for j in range(5):

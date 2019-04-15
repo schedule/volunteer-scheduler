@@ -245,17 +245,12 @@ def main():
                     for s in shifts for d in range(a, b)) <= 1)
 
     # Observers only work with volunteers they are welcomed by
-    for day in list_of_days:
+    for d in list_of_days:
         for o in observers:
             for v in volunteers:
-                # Only if welcomed by all other volunteers
-                if v in welcomers:
-                    model.Add(schedule[(o, d, 2)]
-                            <= sum(schedule[(v, d, s)] for s in [0,1,3]))
-                else:
+                if v not in welcomers:
                     for s in [0,1,3]:
-                        model.Add((schedule[(o, d, 2)]
-                                and schedule[(v, d, s)]) <= 1)
+                        model.Add(schedule[(o, d, 2)] + schedule[(v, d, s)] <=1)
 
     # Cannot work alone
     for id in all_cannot_alone:
@@ -316,7 +311,7 @@ def main():
                         solution_vs_d[(v, s)].append(d)
                     has = True
 
-    solution_v_phone = {}
+    solution_v_phonedays = {}
     for v in volunteers:
         tel1 = []
         tel2 = []
@@ -328,7 +323,7 @@ def main():
             tel2 = solution_vs_d[(v, 3)]
         except:
             pass
-        solution_v_phone[v] = tel1 + tel2
+        solution_v_phonedays[v] = tel1 + tel2
 
     solution_ds_v = {}
     for v in volunteers:
@@ -340,6 +335,21 @@ def main():
             except:
                 pass
 
+    solution_vd_s = {}
+    for v in volunteers:
+        for day in list_of_days:
+            try:
+                if day in solution_v_phonedays[v]:
+                    solution_vd_s[(v, day)] = 0
+            except:
+                pass
+            for s in [1, 2]:
+                try:
+                    if solution_ds_v[(day, s)] == v:
+                        solution_vd_s[(v, day)] = s
+                except:
+                    pass
+
     if not os.path.exists('output'):
         os.makedirs('output')
 
@@ -348,6 +358,9 @@ def main():
             schedule_year, schedule_month, timestamp)
     txt_file = new_filename + '.txt'
     csv_file = new_filename + '.csv'
+
+    global width
+    width = 18 # 16      minimum 14
 
     def print_txt(*txt_line):
         try:
@@ -394,10 +407,10 @@ def main():
         except:
             if everyday or chatday and d in chat_days:
                 csv_item = title + '-'
-                txt_item = title + '-' + ' ' * 12
+                txt_item = title + '-' + ' ' * (width - 4)
             else:
                 csv_item = ''
-                txt_item = ' ' * 16
+                txt_item = ' ' * width
         return txt_item, csv_item
 
     def daily_txt_solution(day, shift, everyday, chatday):
@@ -409,20 +422,20 @@ def main():
         except:
             pass
         if has:
-            daily_shift_item += vol_r[v]
+            daily_shift_item += ' ' * 5 + vol_r[v]
         elif everyday or chatday and day in chat_days:
-            daily_shift_item += '      _    '
+            daily_shift_item += ' ' * (width - 6) + '_' + ' ' * 5
         else:
-            daily_shift_item += ' ' * 11
+            daily_shift_item += ' ' * width
         return daily_shift_item
 
     vol_l = {}
     vol_r = {}
+    w = width - 5
     for v in volunteers:
-        width = 11
         if ord(volunteer_dic[v][0]) < 1000:
-            vol_l[v] = volunteer_dic[v].ljust(width)
-            vol_r[v] = volunteer_dic[v].rjust(width)
+            vol_l[v] = volunteer_dic[v].ljust(w)
+            vol_r[v] = volunteer_dic[v].rjust(w)
         else:
             length = len(volunteer_dic[v])
             if length in [1,2,3]:
@@ -432,13 +445,13 @@ def main():
             if length == 5:
                 alignment_shift = 1
             e = l_encoding
-            vol_l[v] = volunteer_dic[v].encode(e).ljust(width).decode(e)
+            vol_l[v] = volunteer_dic[v].encode(e).ljust(w).decode(e)
             vol_l[v] +=  ' ' * alignment_shift
-            vol_r[v] = volunteer_dic[v].encode(e).rjust(width).decode(e)
+            vol_r[v] = volunteer_dic[v].encode(e).rjust(w).decode(e)
             vol_r[v] = ' ' * alignment_shift + vol_r[v]
 
     def horizontal_line():
-        print_txt('_' * 108)
+        print_txt('_' * 7 * width)
 
 
     # Calendar
@@ -454,13 +467,12 @@ def main():
 
     txt_weekday_line = ''
     for weekday in l_weekday_name_list:
-        txt_weekday_line += '{:<16}'.format(weekday)
+        txt_weekday_line += '{:<{}}'.format(weekday, width)
     print_txt(txt_weekday_line)
     csv_weekday_line = ['']
     csv_weekday_line.extend([weekday for weekday in l_weekday_name_list])
     print_csv(csv_weekday_line)
-
-    txt_1st_calendar_w_aligner = ' ' * 16 * firstday_index
+    txt_1st_calendar_w_aligner = ' ' * width * firstday_index
     csv_1st_calendar_w_aligner = ',' * firstday_index
     txt_lines = [list() for i in range(5)]
     csv_lines = [list() for i in range(5)]
@@ -482,7 +494,7 @@ def main():
             csv_1st_calendar_w_aligner = False
 
         for d in weeks[i]:
-            txt_lines[0] += '{:<16}'.format(d)
+            txt_lines[0] += '{:<{}}'.format(d, width)
             csv_lines[0].append(d)
 
             txt_item, csv_item = calendar_solution(d, l_P, 0, True, False)
@@ -520,12 +532,13 @@ def main():
 
     # By day
     # TXT only
+    w = width
     if ord(l_Day[-1]) < 1000:
-        print_txt('{:>9}|{:>11}{:>11}{:>11}{:>11}'.format(l_Day, l_Phone,
-                l_Extra, l_Chat, l_Observer))
+        print_txt('{:>9}|{:>{}}{:>{}}{:>{}}{:>{}}'.format(l_Day, l_Phone, w,
+                l_Extra, w, l_Chat, w, l_Observer, w))
     else:
         print_txt(l_Day + '|' + l_Phone + l_Extra + l_Chat + l_Observer)
-    print_txt('_' * 9 + '|' + '_' * 48)
+    print_txt('_' * 9 + '|' + '_' * 4 * w)
 
     for d in list_of_days:
          line = ''
@@ -543,27 +556,63 @@ def main():
 
 
     # By volunteer
-    # TXT
+    # TXT new
     shift_dic = {0:l_phone, 1:l_chat, 2:l_observer, 3:l_extra}
     for v in volunteers:
         has = False
-        for s in shifts:
-            shift_name = shift_dic[s]
-            try:
-                days = solution_vs_d[(v, s)]
-                for day in [d for d in days]:
-                    text = ''
-                    if has:
-                        text = ' ' * 11 + ' '
-                    else:
-                        text = vol_r[v] + ':'
-                    print_txt(text + ' {:>2}. {}'.format(day, shift_name))
-                    has = True
-            except:
-                pass
+        for day in all_days_available[v]:
+            for s in [0, 1, 2]:
+                try:
+                    if s == solution_vd_s[(v, day)]:
+                        shift_name = shift_dic[s]
+                        text = ''
+                        if has:
+                            text = ' ' * (width - 5) + ' '
+                        else:
+                            text = vol_r[v] + ':'
+                        print_txt(text + ' {:>2}. {}'.format(day, shift_name))
+                        has = True
+                except:
+                    pass
         if has:
             print_txt()
     print_txt()
+
+
+    # # TXT
+    # shift_dic = {0:l_phone, 1:l_chat, 2:l_observer, 3:l_extra}
+    # for v in volunteers:
+    #     has = False
+    #     shift_name = shift_dic[0]
+    #     try:
+    #         days = solution_v_phonedays[v]
+    #         for day in [d for d in days]:
+    #             text = ''
+    #             if has:
+    #                 text = ' ' * (width - 5) + ' '
+    #             else:
+    #                 text = vol_r[v] + ':'
+    #             print_txt(text + ' {:>2}. {}'.format(day, shift_name))
+    #             has = True
+    #     except:
+    #         pass
+    #     for s in [1, 2]:
+    #         shift_name = shift_dic[s]
+    #         try:
+    #             days = solution_vs_d[(v, s)]
+    #             for day in [d for d in days]:
+    #                 text = ''
+    #                 if has:
+    #                     text = ' ' * (width - 5) + ' '
+    #                 else:
+    #                     text = vol_r[v] + ':'
+    #                 print_txt(text + ' {:>2}. {}'.format(day, shift_name))
+    #                 has = True
+    #         except:
+    #             pass
+    #     if has:
+    #         print_txt()
+    # print_txt()
 
     # CSV
     print_csv(['', l_Name, l_Phone, l_Chat, l_Observer])
@@ -571,10 +620,10 @@ def main():
         line = ['']
         line.append(volunteer_dic[v])
         try:
-            line.append(csv_cell(solution_v_phone[v]))
+            line.append(csv_cell(solution_v_phonedays[v]))
         except:
             line.append('')
-        for s in [1,2]:
+        for s in [1, 2]:
             try:
                 line.append(csv_cell(solution_vs_d[(v, s)]))
             except:

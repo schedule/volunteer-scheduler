@@ -45,35 +45,39 @@ def main():
     else:
         first_monday = 8 - firstday_index
 
-    def certain_weekdays_in_month(weekday_codes): # Monday: 0
-        days = []
-        for c in weekday_codes:
-            d = first_monday + c
-            while d <= days_in_month:
-                days.append(d)
-                d += 7
-        return days
 
-    chat_days = certain_weekdays_in_month([0, 2])
-    weekend_days = certain_weekdays_in_month([5, 6])
 
     weeks = {}
     m = firstday_index
     week_index = 0
     d = 1
+    what_day_dic = {}
     while d <= days_in_month:
         weeks[week_index] = list()
         while d + m - week_index * 7 < 8 and d <= days_in_month:
             weeks[week_index].append(d)
+            what_day_dic[d] = d + m - week_index * 7
             d += 1
         week_index += 1
+
+    def certain_weekdays_in_month(list_of_certain_weekdays): # Monday: 1
+        days = []
+        for c in list_of_certain_weekdays:
+            for d in list_of_days:
+                if what_day_dic[d] == c:
+                    days.append(d)
+        return days
+
+    chat_days = certain_weekdays_in_month([1, 3])
+    weekend_days = certain_weekdays_in_month([6, 7])
+    not_chat_days = [d for d in list_of_days if d not in chat_days]
 
     # Distance between workdays per person
     distance = 2
 
     # Phone: shift 0, Chat: shift 1, Observation: shift 2,
     # Remainder: shift 3
-    shifts = [0,1,2,3]
+    shifts = [0, 1, 2, 3]
 
     model = cp_model.CpModel()
 
@@ -106,7 +110,7 @@ def main():
         # Volunteers doing only chat
         if type == l_C:
             for d in list_of_days:
-                for s in [0,2,3]:
+                for s in [0, 2, 3]:
                     model.Add(schedule[(id, d, s)] == False)
                 if d in days_available:
                     model.Add(schedule[(id, d, 1)] <= 1)
@@ -118,19 +122,19 @@ def main():
          for d in list_of_days:
              model.Add(schedule[(id, d, 2)] == False)
              if d in days_available:
-                 model.Add(sum(schedule[(id, d, s)] for s in [0,1,3]) <= 1)
+                 model.Add(sum(schedule[(id, d, s)] for s in [0, 1, 3]) <= 1)
              else:
-                 for s in [0,1,3]:
+                 for s in [0, 1, 3]:
                      model.Add(schedule[(id, d, s)] == False)
 
         # Volunteers doing only phone
         if type == l_P:
             for d in list_of_days:
-                for s in [1,2]:
+                for s in [1, 2]:
                     model.Add(schedule[(id, d, s)] == False)
                 if d in days_available:
                     model.Add(sum(schedule[(id, d, s)]
-                         for s in [0,3]) <= 1)
+                         for s in [0, 3]) <= 1)
                 else:
                     for s in [0,3]:
                         model.Add(schedule[(id, d, s)] == False)
@@ -139,7 +143,7 @@ def main():
         if type == l_O:
             observers.append(id)
             for d in list_of_days:
-                for s in [0,1,3]:
+                for s in [0, 1, 3]:
                     model.Add(schedule[(id, d, s)] == False)
                 if d in days_available:
                     model.Add(schedule[(id, d, 2)] <= 1)
@@ -242,14 +246,14 @@ def main():
             while b > days_in_month:
                 b -= 1
             model.Add(sum(schedule[(v, d, s)]
-                    for s in shifts for d in range(a, b)) <= 1)
+                    for s in shifts for d in range(a, b + 1)) <= 1)
 
     # Observers only work with volunteers they are welcomed by
     for d in list_of_days:
         for o in observers:
             for v in volunteers:
                 if v not in welcomers:
-                    for s in [0,1,3]:
+                    for s in [0, 1, 3]:
                         model.Add(schedule[(o, d, 2)] + schedule[(v, d, s)] <=1)
 
     # Cannot work alone
@@ -282,16 +286,38 @@ def main():
     # OBJECTIVE
 
     # Filled phone shifts has the greatest priority
-    model.Maximize(sum(8 * schedule[(v, d, 0)] + 6 * schedule[(v, d, 1)]
-            + schedule[(v, d, 2)]
-            + (2 * schedule[(v, d, 3)] if d in chat_days
-                    else 4 * schedule[(v, d, 3)])
+    model.Maximize(
+            sum(schedule[(v, d, 0)] * 10
+                    + schedule[(v, d, 1)] * 9
+                    + schedule[(v, d, 2)]
                     for d in list_of_days for v in volunteers)
-            - sum(3 * schedule[(wa, d, s)] and schedule[(v, d, 0)]
-                    and schedule[(v, d, 1)] and schedule[(v, d, 2)]
-                    and schedule[(v, d, 3)]
-            for wa in all_wants_alone))
+            + sum(schedule[(v, d, 3)] * 7 for d in chat_days
+                    for v in volunteers)
+            + sum(schedule[(v, d, 3)] * 8 for d in not_chat_days
+                    for v in volunteers)
+            - sum(schedule[(wa, d, 0)] and schedule[(v, d, s)]
+                    for s in [1,2,3] for v in volunteers
+                    for wa in all_wants_alone for d in list_of_days)
+            - sum(schedule[(wa, d, 1)] and schedule[(v, d, s)]
+                    for s in [0,2,3] for v in volunteers
+                    for wa in all_wants_alone for d in list_of_days)
+            - sum(schedule[(wa, d, 2)] and schedule[(v, d, s)]
+                    for s in [0,1,3] for v in volunteers
+                    for wa in all_wants_alone for d in list_of_days)
+            - sum(schedule[(wa, d, 3)] and schedule[(v, d, s)]
+                    for s in [0,1,2] for v in volunteers
+                    for wa in all_wants_alone for d in list_of_days)
+    )
 
+    # model.Maximize(sum(8 * schedule[(v, d, 0)] + 6 * schedule[(v, d, 1)]
+    #         + schedule[(v, d, 2)]
+    #         + (2 * schedule[(v, d, 3)] if d in chat_days
+    #                 else 4 * schedule[(v, d, 3)])
+    #                 for d in list_of_days for v in volunteers)
+    #         - sum(3 * schedule[(wa, d, s)] and schedule[(v, d, 0)]
+    #                 and schedule[(v, d, 1)] and schedule[(v, d, 2)]
+    #                 and schedule[(v, d, 3)]
+    #         for wa in all_wants_alone))
 
     # SOLUTION
 
@@ -360,7 +386,7 @@ def main():
     csv_file = new_filename + '.csv'
 
     global width
-    width = 18 # 16      minimum 14
+    width = 18 #     minimum 14
 
     def print_txt(*txt_line):
         try:
@@ -424,7 +450,7 @@ def main():
         if has:
             daily_shift_item += ' ' * 5 + vol_r[v]
         elif everyday or chatday and day in chat_days:
-            daily_shift_item += ' ' * (width - 6) + '_' + ' ' * 5
+            daily_shift_item += ' ' * (width - 6) + ' ' * 5 + '-'
         else:
             daily_shift_item += ' ' * width
         return daily_shift_item
@@ -438,7 +464,7 @@ def main():
             vol_r[v] = volunteer_dic[v].rjust(w)
         else:
             length = len(volunteer_dic[v])
-            if length in [1,2,3]:
+            if length in [1, 2, 3]:
                 alignment_shift = length
             if length == 4:
                 alignment_shift = 3
@@ -570,49 +596,15 @@ def main():
                             text = ' ' * (width - 5) + ' '
                         else:
                             text = vol_r[v] + ':'
-                        print_txt(text + ' {:>2}. {}'.format(day, shift_name))
+                        weekday = l_weekday_name_list[what_day_dic[day]-1]
+                        print_txt(text + ' {:>2}. {}, {}'.format(day,
+                                weekday.lower(), shift_name))
                         has = True
                 except:
                     pass
         if has:
             print_txt()
     print_txt()
-
-
-    # # TXT
-    # shift_dic = {0:l_phone, 1:l_chat, 2:l_observer, 3:l_extra}
-    # for v in volunteers:
-    #     has = False
-    #     shift_name = shift_dic[0]
-    #     try:
-    #         days = solution_v_phonedays[v]
-    #         for day in [d for d in days]:
-    #             text = ''
-    #             if has:
-    #                 text = ' ' * (width - 5) + ' '
-    #             else:
-    #                 text = vol_r[v] + ':'
-    #             print_txt(text + ' {:>2}. {}'.format(day, shift_name))
-    #             has = True
-    #     except:
-    #         pass
-    #     for s in [1, 2]:
-    #         shift_name = shift_dic[s]
-    #         try:
-    #             days = solution_vs_d[(v, s)]
-    #             for day in [d for d in days]:
-    #                 text = ''
-    #                 if has:
-    #                     text = ' ' * (width - 5) + ' '
-    #                 else:
-    #                     text = vol_r[v] + ':'
-    #                 print_txt(text + ' {:>2}. {}'.format(day, shift_name))
-    #                 has = True
-    #         except:
-    #             pass
-    #     if has:
-    #         print_txt()
-    # print_txt()
 
     # CSV
     print_csv(['', l_Name, l_Phone, l_Chat, l_Observer])
@@ -665,7 +657,7 @@ def main():
             print_txt(line)
             print_txt()
     if not nonzero_capacity:
-         print_txt(l_capacity + '.')
+        print_txt(l_capacity + '.')
     print_txt()
     print_txt()
 
@@ -676,9 +668,9 @@ def main():
     print_txt()
 
     if l_message_1:
-         print_txt(' ' * 10 + l_message_1)
-         print_txt(' ' * 10 + l_message_2)
-         print_txt()
+        print_txt(' ' * 10 + l_message_1)
+        print_txt(' ' * 36 + l_message_2)
+        print_txt()
     print_txt()
     print_txt('Copyright (c) 2019, Imre Szakal (imreszakal.com)')
     print_txt()

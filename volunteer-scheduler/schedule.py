@@ -309,16 +309,6 @@ def main():
                     for wa in all_wants_alone for d in list_of_days)
     )
 
-    # model.Maximize(sum(8 * schedule[(v, d, 0)] + 6 * schedule[(v, d, 1)]
-    #         + schedule[(v, d, 2)]
-    #         + (2 * schedule[(v, d, 3)] if d in chat_days
-    #                 else 4 * schedule[(v, d, 3)])
-    #                 for d in list_of_days for v in volunteers)
-    #         - sum(3 * schedule[(wa, d, s)] and schedule[(v, d, 0)]
-    #                 and schedule[(v, d, 1)] and schedule[(v, d, 2)]
-    #                 and schedule[(v, d, 3)]
-    #         for wa in all_wants_alone))
-
     # SOLUTION
 
     solver = cp_model.CpSolver()

@@ -572,7 +572,7 @@ def main():
 
 
     # By volunteer
-    # TXT new
+    # TXT
     shift_dic = {0:l_phone, 1:l_chat, 2:l_observer, 3:l_extra}
     for v in volunteers:
         has = False

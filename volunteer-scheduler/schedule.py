@@ -375,14 +375,12 @@ def main():
         try:
             a = solution_ds_v[(d, 0)]
         except:
-            print('T', d)
             needed[0].append(d)
     needed[1] = []
     for d in chat_days:
         try:
             a = solution_ds_v[(d, 1)]
         except:
-            print('C', d)
             needed[1].append(d)
 
     if not os.path.exists('output'):

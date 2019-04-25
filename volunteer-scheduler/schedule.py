@@ -694,13 +694,14 @@ def main():
     print(l_created, csv_file)
     print_txt()
     print_txt()
+    print_txt()
 
     if l_message_1:
         print_txt(' ' * 10 + l_message_1)
         print_txt(' ' * 36 + l_message_2)
         print_txt()
     print_txt()
-    print_txt('Copyright (c) 2019, Imre Szakal (imreszakal.com)')
+    print_txt(' ' * 10 + 'Copyright (c) 2019, Imre Szakal (imreszakal.com)')
     print_txt()
 
 if __name__ == '__main__':

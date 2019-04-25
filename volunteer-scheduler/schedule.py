@@ -287,8 +287,11 @@ def main():
 
     # Filled phone shifts has the greatest priority
     model.Maximize(
-            sum(schedule[(v, d, 0)] * 10
-                    + schedule[(v, d, 1)] * 9
+            sum(schedule[(v, d, 0)] * 11 for d in chat_days
+                    for v in volunteers)
+            + sum(schedule[(v, d, 0)] * 10 for d in not_chat_days
+                    for v in volunteers)
+            + sum(schedule[(v, d, 1)] * 9
                     + schedule[(v, d, 2)]
                     for d in list_of_days for v in volunteers)
             + sum(schedule[(v, d, 3)] * 7 for d in chat_days
@@ -366,6 +369,22 @@ def main():
                 except:
                     pass
 
+    needed = {}
+    needed[0] = []
+    for d in list_of_days:
+        try:
+            a = solution_ds_v[(d, 0)]
+        except:
+            print('T', d)
+            needed[0].append(d)
+    needed[1] = []
+    for d in chat_days:
+        try:
+            a = solution_ds_v[(d, 1)]
+        except:
+            print('C', d)
+            needed[1].append(d)
+
     if not os.path.exists('output'):
         os.makedirs('output')
 
@@ -405,6 +424,17 @@ def main():
                 # string
                 c = str(cell_data)
         return c
+
+    def print_days(list):
+        t = ''
+        if list:
+            if len(list) > 1:
+                t += str(list)
+                for j in list[1:]:
+                    t += '.,' + str(j)
+            else:
+                t += str(list[0]) + '.'
+        return t
 
     def print_csv(list):
         line = ''
@@ -649,8 +679,16 @@ def main():
     if not nonzero_capacity:
         print_txt(l_capacity + '.')
     print_txt()
-    print_txt()
 
+    # Needed
+    if needed[0] or needed[1]:
+        print_txt(l_need)
+        if needed[0]:
+            print_txt(' ' * 10 + l_Phone + ': ' + print_days(needed[0]))
+        if needed[1]:
+            print_txt(' ' * 10 + l_Chat + ': ' + print_days(needed[1]))
+    print_txt()
+    print_txt()
 
     print(l_created, txt_file)
     print(l_created, csv_file)

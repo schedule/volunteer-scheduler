@@ -34,6 +34,8 @@ def l_day_maybe_plural(day):
 l_but_offered_a = 'de'
 l_but_offered_b = 'ajánlott fel'
 l_need = 'Szükség van még az alábbiakra:'
+l_and = ' és '
+l_already_works = 'mellé'
 l_created = 'Új fájl:'
 l_message_1 = '"Köszönöm, hogy rendelkezésre álltok a hozzátok fordulóknak."'
 l_message_2 = '- A beosztást elkészítő szoftver írója'

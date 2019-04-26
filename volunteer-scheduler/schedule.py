@@ -383,6 +383,34 @@ def main():
         except:
             needed[1].append(d)
 
+    needed_daily = {}
+    needed_nextto = {}
+    for d in list_of_days:
+        need = False
+        if d in needed[0]:
+            needed_daily[d] = 0
+            need = True
+            print('need 0')
+        if d in needed[1]:
+            print('need 1')
+            try:
+                if needed_daily[d] > -1:
+                    needed_daily[d] = 2
+            except:
+                needed_daily[d] = 1
+            need = True
+        if need == True:
+            needed_nextto[d] = []
+            for s in shifts:
+                try:
+                    needed_nextto[d].append(solution_ds_v[(d, s)])
+                except:
+                    pass
+
+
+
+
+
     if not os.path.exists('output'):
         os.makedirs('output')
 
@@ -679,12 +707,49 @@ def main():
     print_txt()
 
     # Needed
-    if needed[0] or needed[1]:
-        print_txt(l_need)
-        if needed[0]:
-            print_txt(' ' * 10 + l_Phone + ': ' + print_days(needed[0]))
-        if needed[1]:
-            print_txt(' ' * 10 + l_Chat + ': ' + print_days(needed[1]))
+    # 6. hétfő - csetes, Adél mellé
+    need_title = False
+    for d in list_of_days:
+        need = False
+        try:
+            if needed_daily[d] > -1:
+                need = True
+        except:
+            pass
+        if need:
+            weekday = l_weekday_name_list[what_day_dic[d]-1]
+            withwhom = needed_nextto[d]
+            with_list = ''
+            try:
+                if len(withwhom) > 1:
+                    with_list = ', '
+                    try:
+                        if withwhom > -1:
+                            with_list = volunteer_dic[withwhom]
+                    except:
+                        for v in withwhom:
+                            with_list += volunteer_dic[v] + ', '
+                        with_list = with_list[:-2]
+                    with_list += ' ' + l_already_works
+            except:
+                pass
+            if not need_title:
+                print_txt(l_need)
+                need_title = True
+            if needed_daily[d] == 0:
+                needed_shift = l_phone
+            if needed_daily[d] == 1:
+                needed_shift = l_chat
+            if needed_daily[d] == 2:
+                needed_shift = l_phone + l_and + l_chat
+            line = ' ' * 10 + str(d) + '. ' + weekday.lower() + ' - '
+            line += needed_shift + with_list + '.'
+            print_txt(line)
+    print_txt()
+    print_txt()
+
+    # Letter to volunteers
+    print_txt()
     print_txt()
     print_txt()
 

@@ -34,6 +34,8 @@ def l_day_maybe_plural(day):
 l_but_offered_a = '但想工作'
 l_but_offered_b = ''
 l_need = '我们还需要人做这些工作：'
+l_already_works = '已经安排好了'
+l_and = '和'
 l_created = '新文件：'
 l_message_1 = ''
 l_message_2 = ''

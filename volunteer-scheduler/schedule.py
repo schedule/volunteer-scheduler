@@ -45,8 +45,6 @@ def main():
     else:
         first_monday = 8 - firstday_index
 
-
-
     weeks = {}
     m = firstday_index
     week_index = 0

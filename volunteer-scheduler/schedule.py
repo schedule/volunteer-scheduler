@@ -99,6 +99,7 @@ def main():
     observers = []
     cannot_work_alone = []
     not_with_them = []
+    all_cp = []
 
     def use_data(id, type, days_available, workload,
             max_weekend_days, welcomes_observer, separate_w, alone,
@@ -119,13 +120,14 @@ def main():
 
         # Volunteers doing chat and phone
         if type == l_CP:
-         for d in list_of_days:
-             model.Add(schedule[(id, d, 2)] == False)
-             if d in days_available:
-                 model.Add(sum(schedule[(id, d, s)] for s in [0, 1, 3]) <= 1)
-             else:
-                 for s in [0, 1, 3]:
-                     model.Add(schedule[(id, d, s)] == False)
+            for d in list_of_days:
+                model.Add(schedule[(id, d, 2)] == False)
+                if d in days_available:
+                    model.Add(sum(schedule[(id, d, s)] for s in [0, 1, 3]) <= 1)
+                else:
+                    for s in [0, 1, 3]:
+                        model.Add(schedule[(id, d, s)] == False)
+            all_cp.append(id)
 
         # Volunteers doing only phone
         if type == l_P:
@@ -390,9 +392,7 @@ def main():
         if d in needed[0]:
             needed_daily[d] = 0
             need = True
-            print('need 0')
         if d in needed[1]:
-            print('need 1')
             try:
                 if needed_daily[d] > -1:
                     needed_daily[d] = 2
@@ -406,9 +406,6 @@ def main():
                     needed_nextto[d].append(solution_ds_v[(d, s)])
                 except:
                     pass
-
-
-
 
 
     if not os.path.exists('output'):
@@ -720,30 +717,26 @@ def main():
             weekday = l_weekday_name_list[what_day_dic[d]-1]
             withwhom = needed_nextto[d]
             with_list = ''
-            try:
-                if len(withwhom) > 1:
-                    with_list = ', '
-                    try:
-                        if withwhom > -1:
-                            with_list = volunteer_dic[withwhom]
-                    except:
-                        for v in withwhom:
-                            with_list += volunteer_dic[v] + ', '
-                        with_list = with_list[:-2]
-                    with_list += ' ' + l_already_works
-            except:
-                pass
+            needed_shift = needed_daily[d]
+            if len(withwhom) > 0:
+                with_list = ', '
+                for v in withwhom:
+                    with_list += volunteer_dic[v] + ', '
+                    if v in all_cp:
+                        needed_shift = 2
+                with_list = with_list[:-2]
+                with_list += ' ' + l_already_works
             if not need_title:
                 print_txt(l_need)
                 need_title = True
-            if needed_daily[d] == 0:
+            if needed_shift == 0:
                 needed_shift = l_phone
-            if needed_daily[d] == 1:
+            if needed_shift == 1:
                 needed_shift = l_chat
-            if needed_daily[d] == 2:
-                needed_shift = l_phone + l_and + l_chat
-            line = ' ' * 10 + str(d) + '. ' + weekday.lower() + ' - '
-            line += needed_shift + with_list + '.'
+            if needed_shift == 2:
+                needed_shift = l_phone + l_or + l_chat
+            line = '{:>12}. {:>10}:'.format(d, weekday.lower())
+            line += '{:>20}'.format(needed_shift) + with_list + '.'
             print_txt(line)
     print_txt()
     print_txt()

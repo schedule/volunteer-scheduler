@@ -1,0 +1,210 @@
+
+
+
+
+2019 April
+
+
+
+
+Monday            Tuesday           Wednesday         Thursday          Friday            Saturday          Sunday            
+______________________________________________________________________________________________________________________________
+1                 2                 3                 4                 5                 6                 7                 
+P: Gabriel        P: Hugo           P: Jakob          P: Lucia          P: Oliver         P: Emily          P: Francesco      
+                                                                                                                              
+C: -                                C: Charlotte                                                                              
+                                                                                                                              
+
+
+
+
+______________________________________________________________________________________________________________________________
+8                 9                 10                11                12                13                14                
+P: Olivia         P: Noah           P: Gabriel        P: Lucia          P: Hugo           P: James          P: Charlotte      
+                                                                                                                              
+C: Liam                             C: Sofia                                                                                  
+O: William                                                                                                  O: William        
+
+
+
+
+______________________________________________________________________________________________________________________________
+15                16                17                18                19                20                21                
+P: Olivia         P: Louise         P: Noah           P: Emily          P: Emma           P: Liam           P: Gabriel        
+                                                                                                                              
+C: Francesco                        C: -                                                                                      
+                                                                        O: William                                            
+
+
+
+
+______________________________________________________________________________________________________________________________
+22                23                24                25                26                27                28                
+P: Francesco      P: Emily          P: Jakob          P: Benjamin       P: Oliver         P: Emma           P: Emily          
+                                                                                                                              
+C: Sofia                            C: -                                                                                      
+                                                                        O: William                                            
+
+
+
+
+______________________________________________________________________________________________________________________________
+29                30                
+P: Louise         P: James          
+                                    
+C: Sofia                            
+                                    
+
+
+
+
+______________________________________________________________________________________________________________________________
+
+
+
+
+
+
+
+
+      Day|             Phone             Extra              Chat          Observer
+_________|________________________________________________________________________
+       1.|           Gabriel                                   -                  
+       2.|              Hugo                                                      
+       3.|             Jakob                           Charlotte                  
+       4.|             Lucia                                                      
+       5.|            Oliver                                                      
+       6.|             Emily                                                      
+       7.|         Francesco                                                      
+       8.|            Olivia                                Liam           William
+       9.|              Noah                                                      
+      10.|           Gabriel                               Sofia                  
+      11.|             Lucia                                                      
+      12.|              Hugo                                                      
+      13.|             James                                                      
+      14.|         Charlotte                                               William
+      15.|            Olivia                           Francesco                  
+      16.|            Louise                                                      
+      17.|              Noah                                   -                  
+      18.|             Emily                                                      
+      19.|              Emma                                               William
+      20.|              Liam                                                      
+      21.|           Gabriel                                                      
+      22.|         Francesco                               Sofia                  
+      23.|             Emily                                                      
+      24.|             Jakob                                   -                  
+      25.|          Benjamin                                                      
+      26.|            Oliver                                               William
+      27.|              Emma                                                      
+      28.|             Emily                                                      
+      29.|            Louise                               Sofia                  
+      30.|             James                                                      
+
+
+
+
+        James: 13. saturday, phone
+               30. tuesday, phone
+
+
+        Emily:  6. saturday, phone
+               18. thursday, phone
+               23. tuesday, phone
+               28. sunday, phone
+
+
+         Liam:  8. monday, chat
+               20. saturday, phone
+
+
+         Emma: 19. friday, phone
+               27. saturday, phone
+
+
+     Benjamin: 25. thursday, phone
+
+
+       Olivia:  8. monday, phone
+               15. monday, phone
+
+
+       Oliver:  5. friday, phone
+               26. friday, phone
+
+
+    Charlotte:  3. wednesday, chat
+               14. sunday, phone
+
+
+      Gabriel:  1. monday, phone
+               10. wednesday, phone
+               21. sunday, phone
+
+
+       Louise: 16. tuesday, phone
+               29. monday, phone
+
+
+         Hugo:  2. tuesday, phone
+               12. friday, phone
+
+
+        Lucia:  4. thursday, phone
+               11. thursday, phone
+
+
+    Francesco:  7. sunday, phone
+               15. monday, chat
+               22. monday, phone
+
+
+        Sofia: 10. wednesday, chat
+               22. monday, chat
+               29. monday, chat
+
+
+         Noah:  9. tuesday, phone
+               17. wednesday, phone
+
+
+        Jakob:  3. wednesday, phone
+               24. wednesday, phone
+
+
+      William:  8. monday, observer
+               14. sunday, observer
+               19. friday, observer
+               26. friday, observer
+
+
+
+
+Workloads: 
+Workloads match originally offered capacity.
+
+
+We still need people for these shifts:
+           1.     monday:                chat, Gabriel already works on this day.
+          17.  wednesday:                chat, Noah already works on this day.
+          24.  wednesday:                chat, Jakob already works on this day.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+          Copyright (c) 2019, Imre Szakal (imreszakal.com)
+
+

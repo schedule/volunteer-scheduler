@@ -34,7 +34,7 @@ def l_day_maybe_plural(day):
 l_but_offered_a = 'but offered'
 l_but_offered_b = ''
 l_need = 'We still need people for these shifts:'
-l_already_works = 'already works on this day'
+l_already_works = 'works on this day'
 l_or = ' or '
 l_created = 'New file:'
 l_message_1 = ''

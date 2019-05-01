@@ -23,7 +23,7 @@ l_chat = 'chat'
 l_observer = 'observer'
 l_extra = 'extra'
 l_workloads = 'Workloads'
-l_capacity = 'Workloads match originally offered capacity'
+l_capacity = 'The schedule used up all of the offered capacity'
 l_works_a = 'works'
 l_works_b = ''
 def l_day_maybe_plural(day):

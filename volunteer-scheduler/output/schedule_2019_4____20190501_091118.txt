@@ -180,13 +180,13 @@ _________|______________________________________________________________________
 
 
 Workloads: 
-Workloads match originally offered capacity.
+The schedule used up all of the offered capacity.
 
 
 We still need people for these shifts:
-           1.     monday:                chat, Gabriel already works on this day.
-          17.  wednesday:                chat, Noah already works on this day.
-          24.  wednesday:                chat, Jakob already works on this day.
+           1.     monday:                chat, Gabriel works on this day.
+          17.  wednesday:                chat, Noah works on this day.
+          24.  wednesday:                chat, Jakob works on this day.
 
 
 

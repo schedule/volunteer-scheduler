@@ -292,7 +292,8 @@ def main():
             + sum(schedule[(v, d, 0)] * 10 for d in not_chat_days
                     for v in volunteers)
             + sum(schedule[(v, d, 1)] * 9
-                    + schedule[(v, d, 2)]
+                    for d in list_of_days for v in volunteers)
+            + sum(schedule[(v, d, 2)] * 9
                     for d in list_of_days for v in volunteers)
             + sum(schedule[(v, d, 3)] * 7 for d in chat_days
                     for v in volunteers)

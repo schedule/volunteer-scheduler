@@ -20,10 +20,16 @@ else:
 
 def main():
     f = []
-    with open(l_filename, encoding='UTF8') as data_file:
-         reader = csv.reader(data_file, delimiter=',')
-         for row in reader:
-             f.append(row)
+    try:
+        with open(l_filename, encoding='UTF8') as data_file:
+             reader = csv.reader(data_file, delimiter=',')
+             for row in reader:
+                 f.append(row)
+    except FileNotFoundError:
+        print()
+        print('Data file "' + l_filename + '" not found.')
+        print()
+        sys.exit()
     schedule_year = int(f[0][1])
     schedule_month = int(f[1][1])
     month_name = l_month_name_dic[schedule_month]

@@ -54,3 +54,11 @@ Requires 64-bit Python 3.7
 
 1. Prints results into the terminal and saves it into schedule_YYYY_MM____YYYYMMDD_hhmm.txt.
 2. Saves results into schedule_YYYY_MM____YYYYMMDD_hhmm.csv which can be conveniently imported into a spreadsheet.
+
+
+## Sample Output
+
+<p><img src="https://imreszakal.com/github/volunteer-scheduler/01.JPG" alt="" title="" />
+<img src="https://imreszakal.com/github/volunteer-scheduler/02.JPG" alt="" title="" />
+<img src="https://imreszakal.com/github/volunteer-scheduler/03.JPG" alt="" title="" />
+<img src="https://imreszakal.com/github/volunteer-scheduler/04.JPG" alt="" title="" /></p>

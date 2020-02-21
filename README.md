@@ -1,8 +1,6 @@
 # Volunteer workshift scheduler for a helpline
 Code written in Python finds the best possible schedule for volunteers while incorporating constrains and special requirements using **[CP-SAT Solver](https://developers.google.com/optimization/cp/cp_solver)** (Constraint Programming - boolean SATisfiability problem Solver).
 
-Java version is in development.
-
 ### The problem
 Arranging volunteers for a helpline service for the period of one month.
 

@@ -46,7 +46,7 @@ Requires 64-bit Python 3.7
 
    Alternatively you can create your XX language extension by creating the corresponding data_XX.csv and language_XX.py files.
 2. Export corresponding data/data_XX.csv file into a spreadsheet, fill in your data, then export back into this file.
-<p><img src="https://imreszakal.com/github/volunteer-scheduler/00.JPG" alt="" title="" /></p>
+<p><img src="https://imreszakal.com/github/volunteer-scheduler/00.PNG" alt="" title="" /></p>
 3. Execute the program from its directory:
 
 <code>python schedule.py</code>
@@ -59,7 +59,7 @@ Requires 64-bit Python 3.7
 
 ## Sample Output
 
-<p><img src="https://imreszakal.com/github/volunteer-scheduler/01.JPG" alt="" title="" />
-<img src="https://imreszakal.com/github/volunteer-scheduler/02.JPG" alt="" title="" />
-<img src="https://imreszakal.com/github/volunteer-scheduler/03.JPG" alt="" title="" />
-<img src="https://imreszakal.com/github/volunteer-scheduler/04.JPG" alt="" title="" /></p>
+<p><img src="https://imreszakal.com/github/volunteer-scheduler/01.PNG" alt="" title="" />
+<img src="https://imreszakal.com/github/volunteer-scheduler/02.PNG" alt="" title="" />
+<img src="https://imreszakal.com/github/volunteer-scheduler/03.PNG" alt="" title="" />
+<img src="https://imreszakal.com/github/volunteer-scheduler/04.PNG" alt="" title="" /></p>

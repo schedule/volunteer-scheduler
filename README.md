@@ -60,4 +60,5 @@ Requires 64-bit Python 3.7
 <p><img src="https://imreszakal.com/github/volunteer-scheduler/01.PNG" alt="" title="" />
 <img src="https://imreszakal.com/github/volunteer-scheduler/02.PNG" alt="" title="" />
 <img src="https://imreszakal.com/github/volunteer-scheduler/03.PNG" alt="" title="" />
-<img src="https://imreszakal.com/github/volunteer-scheduler/04.PNG" alt="" title="" /></p>
+<img src="https://imreszakal.com/github/volunteer-scheduler/04.PNG" alt="" title="" />
+<img src="https://imreszakal.com/github/volunteer-scheduler/05.PNG" alt="" title="" /></p>
